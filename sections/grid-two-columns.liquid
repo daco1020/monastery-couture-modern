@@ -168,23 +168,10 @@
         {%- endif -%}
 
       {% when 'grid_video' %}
-        {% liquid
-          assign grid_title = gridItem.settings.title
-          assign grid_link = gridItem.settings.link
-
-          if gridItem.settings.collection != blank
-            if grid_title == blank or grid_title == 'TITULO'
-              assign grid_title = gridItem.settings.collection.title
-            endif
-            if grid_link == blank
-              assign grid_link = gridItem.settings.collection.url
-            endif
-          endif
-        %}
-        {%- if grid_link -%}
+        {%- if gridItem.settings.link -%}
             <a 
                 class="relative block overflow-hidden col-span-2 {{ elementsClasses[position] }}" 
-                href="{{ grid_link }}"
+                href="{{ gridItem.settings.link }}"
                 {% if gridItem.settings.is_blank %}
                     target="_blank"
                 {% endif %}
@@ -269,30 +256,17 @@
               {% endif %}
             </div>
 
-        {%- if grid_link -%}
+        {%- if gridItem.settings.link -%}
             </a>
         {%- else -%}
             </div>
         {%- endif -%}
     
       {% when 'grid_color' %}
-        {% liquid
-            assign grid_title = gridItem.settings.title
-            assign grid_link = gridItem.settings.link
-  
-            if gridItem.settings.collection != blank
-              if grid_title == blank or grid_title == 'TITULO'
-                assign grid_title = gridItem.settings.collection.title
-              endif
-              if grid_link == blank
-                assign grid_link = gridItem.settings.collection.url
-              endif
-            endif
-          %}
-        {%- if grid_link -%}
+        {%- if gridItem.settings.link -%}
             <a 
               class="relative block overflow-hidden col-span-2 aspect-[.8] h-full {{ elementsClasses[position] }}" 
-              href="{{ grid_link }}"
+              href="{{ gridItem.settings.link }}"
               style="background-color: {{ gridItem.settings.bg_color }}"
               {% if gridItem.settings.is_blank %}
                   target="_blank"
@@ -309,6 +283,7 @@
               data-animate class="custom-space max-w-full w-max absolute z-10 {{ gridItem.settings.mobile_vertical_alignment }} {{ gridItem.settings.mobile_horizontal_alignment }} {{ gridItem.settings.mobile_text_alignment }} {{ gridItem.settings.desktop_vertical_alignment }} {{ gridItem.settings.desktop_horizontal_alignment }} {{ gridItem.settings.desktop_text_alignment }}"
               style="--pt-desktop:{{ gridItem.settings.desktop_offset_top }}px;--pb-desktop:{{ gridItem.settings.desktop_offset_bottom }}px;--pl-desktop:{{ gridItem.settings.desktop_offset_left }}px;--pr-desktop:{{ gridItem.settings.desktop_offset_right }}px;--pt-mobile:{{ gridItem.settings.mobile_offset_top }}px;--pb-mobile:{{ gridItem.settings.mobile_offset_bottom }}px;--pl-mobile:{{ gridItem.settings.mobile_offset_left }}px;--pr-mobile:{{ gridItem.settings.mobile_offset_right }}px"
             >
+              {% if gridItem.settings.title != blank %}
                   <h2 class="custom-format {{ titleColor }} tracking-cinematic uppercase"
                     style="
                       --fs-desktop: {{- gridItem.settings.desktop_title_font_size -}}px;
@@ -364,7 +339,7 @@
                   </div>
               {% endif %}
             </div>
-          {%- if grid_link -%}
+          {%- if gridItem.settings.link -%}
             </a>
             {%- else -%}
               </div>
@@ -1569,12 +1544,6 @@
       "name": "Color",
       "type": "grid_color",
       "settings": [
-        {
-          "type": "collection",
-          "id": "collection",
-          "label": "Conectar con Colección (opcional)",
-          "info": "Si se selecciona, el título y el link se tomarán de la colección si están vacíos."
-        },
         {
           "type": "header",
           "content": "== Color de fondo"

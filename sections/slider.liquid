@@ -87,37 +87,31 @@
               {% endif %}
                 <figure class="skeleton absolute inset-0">
                   {% if slide.settings.mobile_image %}
-                    {% liquid
-            assign slide_image_mobile = slide.settings.mobile_image
-            assign slide_image_desktop = slide.settings.desktop_image
-
-            if slide.settings.collection != blank
-              if slide_image_mobile == blank
-                assign slide_image_mobile = slide.settings.collection.featured_image
-              endif
-              if slide_image_desktop == blank
-                assign slide_image_desktop = slide.settings.collection.featured_image
-              endif
-            endif
-          %}
-          <div class="h-full w-full pb-[150%] md:pb-[45.8%] overflow-hidden">
-            {% if slide_image_mobile %}
-              <img
-                class="block w-full h-full object-cover md:hidden"
-                src="{{ slide_image_mobile | image_url: width: 1000 }}"
-                alt="{{ slide_image_mobile.alt }}"
-                loading="lazy"
-              >
-            {% endif %}
-            {% if slide_image_desktop %}
-              <img
-                class="block w-full h-full object-cover hidden md:block"
-                src="{{ slide_image_desktop | image_url: width: 2500 }}"
-                alt="{{ slide_image_desktop.alt }}"
-                loading="lazy"
-              >
-            {% endif %}
-          </div>
+                      {{
+                        slide.settings.mobile_image.src
+                        | image_url: width: 720
+                        | image_tag:
+                          loading: 'eager',
+                          fetchpriority: 'high',
+                          alt: slide.settings.mobile_image.alt,
+                          class: 'block w-full h-full object-cover object-center md:hidden'
+                      }}
+                    {% else %}
+                        {{ 'image' | placeholder_svg_tag: 'block w-full h-full object-cover object-center md:hidden' }}
+                  {% endif %}
+                  {% if slide.settings.desktop_image %}
+                      {{
+                        slide.settings.desktop_image.src
+                        | image_url: width: 2400
+                        | image_tag:
+                          loading: 'eager',
+                          fetchpriority: 'high',
+                          alt: slide.settings.desktop_image.alt,
+                          class: 'hidden w-full h-full object-cover object-center md:block'
+                      }}
+                    {% else %}
+                        {{ 'image' | placeholder_svg_tag: 'hidden w-full h-full object-cover object-center md:block' }}
+                  {% endif %}
                 </figure>
                 <div
                   data-animate
@@ -214,25 +208,26 @@
                 >
               {% endif %}
                 <div class="absolute inset-0">
-                  {% liquid
-                    assign poster_image = slide.settings.poster_image
-                    if slide.settings.collection != blank and poster_image == blank
-                      assign poster_image = slide.settings.collection.featured_image
-                    endif
-
-                    assign video_url = slide.settings.video
-                    if slide.settings.desktop_video != blank
-                        # If there is a separate desktop video, we can use it in a source tag or similar
-                        # But for simplicity, let's just use the main one or the desktop one based on a media query approach if needed.
-                        # For now, let's keep it consistent with the theme's original intent if possible.
-                    endif
-                  %}
                   <video
-                    class="block w-full h-full object-cover absolute inset-0 {{ slide.settings.image_alignment }}"
-                    {% if poster_image != blank %}
-                      poster="{{ poster_image | image_url }}"
+                    class="block w-full h-full object-cover object-center md:hidden"
+                    {% if slide.settings.mobile_poster_video != blank %}
+                      poster="{{ slide.settings.mobile_poster_video | image_url }}" 
                     {% endif %}
-                    src="{{ video_url }}"
+                    src="{{ slide.settings.mobile_video }}"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+
+                  <video
+                    class="hidden w-full h-full object-cover object-center md:block"
+                    {% if slide.settings.desktop_poster_video != blank %}
+                      poster="{{ slide.settings.desktop_poster_video | image_url }}" 
+                    {% endif %}
+                    src="{{ slide.settings.desktop_video }}"
                     autoplay
                     muted
                     loop

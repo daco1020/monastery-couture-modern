@@ -85,6 +85,7 @@
         "b8886de5-8d02-42c3-be64-d849d6deb89d": {
           "type": "grid_image",
           "settings": {
+            "collection": "",
             "image": "shopify://shop_images/SHOPI_0005_R09140030VINOTINTO8.jpg",
             "image_alignment": "object-center",
             "title": "",
@@ -136,6 +137,7 @@
         "04d43666-c9f1-4c22-acb8-6e4fbfd70541": {
           "type": "grid_image",
           "settings": {
+            "collection": "",
             "image": "shopify://shop_images/SHOPI_0007_R09140030VERDECLARO1.jpg",
             "image_alignment": "object-center",
             "title": "",
@@ -187,6 +189,7 @@
         "d40242e2-963d-4b47-9f85-e7199b4bafdf": {
           "type": "grid_image",
           "settings": {
+            "collection": "",
             "image": "shopify://shop_images/SHOPI_0005_R09140030VINOTINTO8.jpg",
             "image_alignment": "object-center",
             "title": "Shirt",
@@ -252,6 +255,20 @@
     "c2567ed7-d405-4614-937f-ae00826b63a9": {
       "type": "product-slider",
       "blocks": {
+        "button_link_CVdfyq": {
+          "type": "button_link",
+          "settings": {
+            "link": "",
+            "is_blank": false,
+            "label": "BOTON",
+            "desktop_font_size": 16,
+            "desktop_font_weight": 600,
+            "desktop_letter_spacing": 0,
+            "mobile_font_size": 16,
+            "mobile_font_weight": 600,
+            "mobile_letter_spacing": 0
+          }
+        },
         "124b42bc-0ec2-4fb3-baa8-02a4cedc0b76": {
           "type": "custom_text_title",
           "settings": {
@@ -266,6 +283,7 @@
         }
       },
       "block_order": [
+        "button_link_CVdfyq",
         "124b42bc-0ec2-4fb3-baa8-02a4cedc0b76"
       ],
       "settings": {
@@ -401,6 +419,17 @@
         "mobile_offset_left": 0,
         "mobile_offset_right": 0
       }
+    },
+    "products_grid_three_columns_GXx9QL": {
+      "type": "products-grid-three-columns",
+      "name": "Products grid (3 columns)",
+      "settings": {
+        "product_list": [],
+        "desktop_offset_top": 0,
+        "desktop_offset_bottom": 0,
+        "mobile_offset_top": 0,
+        "mobile_offset_bottom": 0
+      }
     }
   },
   "order": [
@@ -415,6 +444,7 @@
     "38bab53c-d591-43d9-983c-4704f81a9871",
     "banner_video_PdxcPR",
     "hero_video_UqabCb",
-    "banner_video_QCWqgy"
+    "banner_video_QCWqgy",
+    "products_grid_three_columns_GXx9QL"
   ]
 }
