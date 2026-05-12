@@ -85,6 +85,7 @@
         "b8886de5-8d02-42c3-be64-d849d6deb89d": {
           "type": "grid_image",
           "settings": {
+            "image": "shopify://shop_images/SHOPI_0005_R09140030VINOTINTO8.jpg",
             "image_alignment": "object-center",
             "title": "",
             "title_color": "BLACK",
@@ -135,6 +136,7 @@
         "04d43666-c9f1-4c22-acb8-6e4fbfd70541": {
           "type": "grid_image",
           "settings": {
+            "image": "shopify://shop_images/SHOPI_0007_R09140030VERDECLARO1.jpg",
             "image_alignment": "object-center",
             "title": "",
             "title_color": "WHITE",
@@ -185,8 +187,9 @@
         "d40242e2-963d-4b47-9f85-e7199b4bafdf": {
           "type": "grid_image",
           "settings": {
+            "image": "shopify://shop_images/SHOPI_0005_R09140030VINOTINTO8.jpg",
             "image_alignment": "object-center",
-            "title": "",
+            "title": "Shirt",
             "title_color": "WHITE",
             "desktop_title_font_size": 16,
             "desktop_title_font_weight": 200,
