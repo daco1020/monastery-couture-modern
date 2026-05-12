@@ -351,79 +351,22 @@
         "p-b-desktop": 10
       }
     },
-    "banner_video_PdxcPR": {
-      "type": "banner-video",
-      "settings": {
-        "video": "https://www.youtube.com/watch?v=9kqnsoY94L8",
-        "link": "",
-        "is_blank": false,
-        "custom_overlay": 0,
-        "desktop_vertical_alignment": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
-        "desktop_horizontal_alignment": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
-        "desktop_text_alignment": "lg:text-left",
-        "desktop_offset_top": 0,
-        "desktop_offset_bottom": 0,
-        "desktop_offset_left": 0,
-        "desktop_offset_right": 0,
-        "mobile_vertical_alignment": "bottom-0 -translate-y-0",
-        "mobile_horizontal_alignment": "left-0 -translate-x-0",
-        "mobile_text_alignment": "text-left",
-        "mobile_offset_top": 0,
-        "mobile_offset_bottom": 0,
-        "mobile_offset_left": 0,
-        "mobile_offset_right": 0
-      }
-    },
-    "hero_video_UqabCb": {
-      "type": "hero-video",
-      "settings": {
-        "mobile_video": "https://www.youtube.com/watch?v=9kqnsoY94L8",
-        "desktop_video": "https://www.youtube.com/watch?v=9kqnsoY94L8",
-        "custom_overlay": 0,
-        "desktop_vertical_alignment": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
-        "desktop_horizontal_alignment": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
-        "desktop_text_alignment": "lg:text-left",
-        "desktop_offset_top": 0,
-        "desktop_offset_bottom": 0,
-        "desktop_offset_left": 0,
-        "desktop_offset_right": 0,
-        "mobile_vertical_alignment": "bottom-0 -translate-y-0",
-        "mobile_horizontal_alignment": "left-0 -translate-x-0",
-        "mobile_text_alignment": "text-left",
-        "mobile_offset_top": 0,
-        "mobile_offset_bottom": 0,
-        "mobile_offset_left": 0,
-        "mobile_offset_right": 0
-      }
-    },
-    "banner_video_QCWqgy": {
-      "type": "banner-video",
-      "name": "Banner video",
-      "settings": {
-        "video": "",
-        "link": "",
-        "is_blank": false,
-        "custom_overlay": 0,
-        "desktop_vertical_alignment": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
-        "desktop_horizontal_alignment": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
-        "desktop_text_alignment": "lg:text-left",
-        "desktop_offset_top": 0,
-        "desktop_offset_bottom": 0,
-        "desktop_offset_left": 0,
-        "desktop_offset_right": 0,
-        "mobile_vertical_alignment": "bottom-0 -translate-y-0",
-        "mobile_horizontal_alignment": "left-0 -translate-x-0",
-        "mobile_text_alignment": "text-left",
-        "mobile_offset_top": 0,
-        "mobile_offset_bottom": 0,
-        "mobile_offset_left": 0,
-        "mobile_offset_right": 0
-      }
-    },
     "products_grid_three_columns_GXx9QL": {
       "type": "products-grid-three-columns",
       "name": "Products grid (3 columns)",
       "settings": {
+        "product_list": [],
+        "desktop_offset_top": 0,
+        "desktop_offset_bottom": 0,
+        "mobile_offset_top": 0,
+        "mobile_offset_bottom": 0
+      }
+    },
+    "product_slider_MgtChE": {
+      "type": "product-slider",
+      "name": "Productos slider",
+      "settings": {
+        "collection": "automated-collection",
         "product_list": [],
         "desktop_offset_top": 0,
         "desktop_offset_bottom": 0,
@@ -442,9 +385,7 @@
     "1664831292212fd688",
     "137b64e8-473d-4049-86d5-6111550a872e",
     "38bab53c-d591-43d9-983c-4704f81a9871",
-    "banner_video_PdxcPR",
-    "hero_video_UqabCb",
-    "banner_video_QCWqgy",
-    "products_grid_three_columns_GXx9QL"
+    "products_grid_three_columns_GXx9QL",
+    "product_slider_MgtChE"
   ]
 }
