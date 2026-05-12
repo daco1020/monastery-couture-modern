@@ -1,1 +1,77 @@
-{"layout":"product","sections":{"header":{"type":"header","settings":{"header_type":"black","menu":"development-temporal-menu","menu_help":"development-temporal-menu"}},"template":{"type":"template-product","blocks":{"tags":{"type":"tags","settings":{}},"title":{"type":"title","settings":{}},"price":{"type":"price","settings":{}},"variant_selector":{"type":"variant_selector","settings":{}},"checkout_buttons":{"type":"checkout_buttons","settings":{}},"description":{"type":"description","settings":{}}},"block_order":["tags","title","price","variant_selector","checkout_buttons","description"],"settings":{"shipping":"garantias-devoluciones-y-cambios"}},"recomendations":{"type":"product-recomendations","settings":{}}},"order":["header","template","recomendations"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "layout": "product",
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {
+        "header_type": "black",
+        "menu": "",
+        "menu_help": ""
+      }
+    },
+    "template": {
+      "type": "template-product",
+      "blocks": {
+        "tags": {
+          "type": "tags",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_selector": {
+          "type": "variant_selector",
+          "settings": {}
+        },
+        "checkout_buttons": {
+          "type": "checkout_buttons",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "tags",
+        "title",
+        "price",
+        "variant_selector",
+        "checkout_buttons",
+        "description"
+      ],
+      "settings": {
+        "shipping": ""
+      }
+    },
+    "product_recomendations_z9F6JR": {
+      "type": "product-recomendations",
+      "name": "Product recomendations",
+      "settings": {}
+    },
+    "recomendations": {
+      "type": "product-recomendations",
+      "settings": {}
+    }
+  },
+  "order": [
+    "header",
+    "template",
+    "product_recomendations_z9F6JR",
+    "recomendations"
+  ]
+}
