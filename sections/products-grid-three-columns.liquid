@@ -74,7 +74,13 @@
   {% endif %}
 
   <div class="flex justify-center md:justify-between flex-wrap w-full gap-3">
-    {%- for product in section.settings.product_list -%}
+    {% liquid
+      assign product_source = section.settings.product_list
+      if section.settings.collection != blank and product_source.count == 0
+        assign product_source = section.settings.collection.products
+      endif
+    %}
+    {%- for product in product_source -%}
       {%- if product != blank -%}
         <div class="w-[calc(50%_-_0.75rem)] m-0 md:w-[calc(33.333%_-_0.75rem)]">
           {% render 'single-product', product: product, layout: 'grid' %}
@@ -340,6 +346,12 @@
     }
   ],
   "settings": [
+    {
+      "id": "collection",
+      "type": "collection",
+      "label": "Colección",
+      "info": "Si se selecciona, el grid se llenará automáticamente con los productos de esta colección (sobrescribe la lista de productos si está vacía)."
+    },
     {
       "id": "product_list",
       "type": "product_list",

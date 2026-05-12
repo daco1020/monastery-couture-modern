@@ -1,7 +1,13 @@
-{%- if section.settings.link -%}
+{% liquid
+  assign banner_link = section.settings.link
+  if section.settings.collection != blank and banner_link == blank
+    assign banner_link = section.settings.collection.url
+  endif
+%}
+{%- if banner_link -%}
   <a 
     class="relative w-full overflow-hidden block"
-    href="{{ section.settings.link }}"
+    href="{{ banner_link }}"
     {% if section.settings.is_blank %}
       rel="noopener noreferrer"
       target="_blank"
@@ -28,6 +34,12 @@
                   assign contentClasses = 'text-monastery-white'
                 endif
               %}
+              {% liquid
+                assign title_text = block.settings.title
+                if section.settings.collection != blank and title_text == blank or title_text == 'TITULO'
+                  assign title_text = section.settings.collection.title
+                endif
+              %}
               <h2 
                 class="custom-format {{ contentClasses }}"
                 style="
@@ -41,7 +53,7 @@
                   --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
                 "
               >
-                {{ block.settings.title }}
+                {{ title_text }}
               </h2>
             {% when 'custom_text' %}
               {% liquid
@@ -86,7 +98,13 @@
                     assign buttonBorder = ''
                 endcase
               %}
-              {% if section.settings.link %}
+              {% liquid
+                assign banner_link = section.settings.link
+                if section.settings.collection != blank and banner_link == blank
+                  assign banner_link = section.settings.collection.url
+                endif
+              %}
+              {% if banner_link %}
                 <div
                   class="btn mt-3 custom-format {{ buttonColor }} {{ buttonBorder }}"
                   style="
@@ -112,13 +130,22 @@
     </div>
   {% endif %}
 
-  {% if section.settings.video %}
+  {% liquid
+    assign banner_video = section.settings.video
+    assign poster_image = section.settings.image
+    if section.settings.collection != blank
+        if poster_image == blank
+            assign poster_image = section.settings.collection.featured_image
+        endif
+    endif
+  %}
+  {% if banner_video %}
     <div class="relative block overflow-hidden overlay after:content-[''] after:absolute after:inset-0 after:bg-black lg:h-[35.25rem]" style="--overlay-opacity: {{ section.settings.custom_overlay }}">
       <video 
           class="block w-full h-full object-cover aspect-[2/1]"
-          src="{{ section.settings.video }}"
-          {% if section.settings.image != blank %}
-            poster="{{ section.settings.image| image_url }}" 
+          src="{{ banner_video }}"
+          {% if poster_image != blank %}
+            poster="{{ poster_image | image_url }}" 
           {% endif %}
           autoplay
           muted
@@ -144,6 +171,12 @@
     {
       "type": "header",
       "content": "== Videos"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección",
+      "info": "Si se selecciona, el título, la imagen de poster y el link se tomarán de la colección si están vacíos."
     },
     {
       "type": "url",

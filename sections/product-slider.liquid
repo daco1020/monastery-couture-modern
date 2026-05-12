@@ -80,7 +80,13 @@
       <!-- Additional required wrapper -->
       <div class="swiper-wrapper">
         <!-- Slides -->
-        {%- for product in section.settings.product_list -%}
+        {% liquid
+          assign product_source = section.settings.product_list
+          if section.settings.collection != blank and product_source.count == 0
+            assign product_source = section.settings.collection.products
+          endif
+        %}
+        {%- for product in product_source -%}
           {%- if product != blank -%}
             <div class="swiper-slide">
               {% render 'single-product', product: product, layout: 'slide' %}
@@ -364,6 +370,12 @@
     {
       "type": "header",
       "content": "== Productos"
+    },
+    {
+      "id": "collection",
+      "type": "collection",
+      "label": "Colección",
+      "info": "Si se selecciona, el slider se llenará automáticamente con los productos de esta colección (sobrescribe la lista de productos si está vacía)."
     },
     {
       "id": "product_list",

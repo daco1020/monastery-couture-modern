@@ -1,7 +1,13 @@
-{%- if section.settings.link -%}
+{% liquid
+  assign banner_link = section.settings.link
+  if section.settings.collection != blank and banner_link == blank
+    assign banner_link = section.settings.collection.url
+  endif
+%}
+{%- if banner_link -%}
   <a 
     class="relative w-full overflow-hidden block"
-    href="{{ section.settings.link }}"
+    href="{{ banner_link }}"
     {% if section.settings.is_blank %}
       rel="noopener noreferrer"
       target="_blank"
@@ -28,6 +34,12 @@
                   assign contentClasses = 'text-monastery-white'
                 endif
               %}
+              {% liquid
+                assign title_text = block.settings.title
+                if section.settings.collection != blank and title_text == blank or title_text == 'TITULO'
+                  assign title_text = section.settings.collection.title
+                endif
+              %}
               <h2 
                 class="custom-format {{ contentClasses }}"
                 style="
@@ -41,7 +53,7 @@
                   --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
                 "
               >
-                {{ block.settings.title }}
+                {{ title_text }}
               </h2>
             {% when 'custom_text' %}
               {% liquid
@@ -86,7 +98,13 @@
                     assign buttonBorder = ''
                 endcase
               %}
-              {% if section.settings.link %}
+              {% liquid
+                assign banner_link = section.settings.link
+                if section.settings.collection != blank and banner_link == blank
+                  assign banner_link = section.settings.collection.url
+                endif
+              %}
+              {% if banner_link %}
                 <div
                   class="btn mt-3 custom-format {{ buttonColor }} {{ buttonBorder }}"
                   style="
@@ -113,14 +131,20 @@
   {% endif %}
   
   <div class="overlay" style="--overlay-opacity: {{ section.settings.custom_overlay }}">
-    {% if section.settings.image %}
+    {% liquid
+        assign banner_image = section.settings.image
+        if section.settings.collection != blank and banner_image == blank
+            assign banner_image = section.settings.collection.featured_image
+        endif
+    %}
+    {% if banner_image %}
           <figure class="skeleton relative block overflow-hidden lg:h-[45.25rem]" >
             {{
-              section.settings.image.src
+              banner_image.src
               | image_url: width: 1920
               | image_tag:
                 loading: 'lazy',
-                alt: section.settings.image.alt,
+                alt: banner_image.alt,
                 class: 'block w-full h-full object-cover aspect-[2/1]'
             }}
           </figure>
@@ -146,6 +170,12 @@
     {
       "type": "header",
       "content": "== Imagenes"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección",
+      "info": "Si se selecciona, el título, la imagen y el link se tomarán de la colección si están vacíos."
     },
     {
       "type": "image_picker",
