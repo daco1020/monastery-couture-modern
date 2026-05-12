@@ -1,0 +1,71 @@
+<div
+  data-cart-sidebar
+  class="fixed top-0 right-0 bottom-0 w-full h-full z-50 max-w-0 opacity-0 overflow-auto transition-all duration-500 ease-out-expo"
+>
+  <div class="relative min-h-full glass-dark flex flex-col">
+    <div class="flex justify-between items-center text-left border-b border-white/10 py-5 px-6">
+      <p class="text-sm font-bold tracking-cinematic uppercase">
+        {{ 'cart.general.your_products' | t }}
+      </p>
+      <button data-cart-close aria-label="Close cart" class="transition-transform hover:rotate-90">
+        {% render 'close-icon', classNames: 'w-5 h-5 text-white' %}
+      </button>
+    </div>
+    <div data-cart-products class="px-5">
+      {%- if cart.item_count > 0 -%}
+        <form
+          data-cart-checkout
+          action="{{ routes.cart_url }}"
+          method="POST"
+          novalidate
+          onsubmit="
+            (function(){
+              window.$APP.setLoadingState()
+            })();
+          "
+        >
+          <div>
+            <div>
+              {%- for item in cart.items -%}
+                {% render 'cart-item', item: item, line: forloop.index, layout: 'small' %}
+              {%- endfor -%}
+            </div>
+          </div>
+          <div class="mt-auto p-6 border-t border-white/10">
+            <div class="mb-5">
+              <div class="flex items-center justify-between mb-4">
+                <p class="text-sm opacity-60 uppercase tracking-widest">{{ 'cart.general.subtotal' | t }}</p>
+                <span class="text-xl font-bold text-gold">
+                  {{ cart.total_price | money }}
+                </span>
+              </div>
+              <p class="text-[10px] opacity-40 uppercase tracking-widest mb-6">{{ 'cart.general.taxes' | t }}</p>
+              
+              <button type="submit" name="checkout" class="btn-modern accent w-full mb-3">
+                <span> {{ 'cart.general.go_checkout' | t }} </span>
+              </button>
+              
+              <a href="{{ routes.cart_url }}" class="btn-modern w-full !text-xs !py-3">
+                <span> {{ 'cart.general.go_cart' | t }} </span>
+              </a>
+            </div>
+          </div>
+        </form>
+      {%- else -%}
+        <div class="container py-10">
+          <div class="flex flex-col justify-center items-center text-center py-3">
+            <p class="text-xs my-2 font-bold ">
+              {% render 'cart_icon', classNames: 'stroke-black h-10 w-10 m-auto mb-5' %}
+              {{ 'cart.cart_page_empty.empty' | t }}
+            </p>
+            <a class="btn black text-sm font-bold  mt-5" href="{{ routes.root_url }}">
+              <span>
+                {{ 'cart.cart_page_empty.button' | t }}
+              </span>
+            </a>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,198 @@
+{% if section.blocks.size > 0 %}
+  <div
+    class="custom-space w-full max-w-screen-md m-auto flex flex-col md:flex-row"
+    style="--pt-desktop:{{ section.settings.desktop_offset_top }}px;--pb-desktop:{{ section.settings.desktop_offset_bottom }}px;--pt-mobile:{{ section.settings.mobile_offset_top }}px;--pb-mobile:{{ section.settings.mobile_offset_bottom }}px"
+  >
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'form' %}
+          <div class="flex-1 p-5 last-of-type:border-t last-of-type:border-t-slate-300 md:last-of-type:border-l-slate-300 md:last-of-type:border-l md:last-of-type:border-t-0">
+            {% form 'contact' %}
+              {% if form.errors %}
+                <div class="mb-5">
+                  <div class="bg-rose-600 text-monastery-white p-3 flex items-center">
+                    {% render 'error-icon' classNames: "w-10 h-10 mr-3" %}
+                    <p>{{ 'errors.form.error_form' | t }}</p>
+                  </div>
+                  <ul>
+                    {% for error in form.errors %}
+                      {{ form.errors.messages[error] }}
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% elsif form.posted_sucessfully? %}
+                <div class="mb-5">
+                  <div class="bg-monastery-black text-monastery-white p-3 flex items-center">
+                    {% render 'check-icon' classNames: "w-10 h-10 mr-3" %}
+                    <p>{{ 'general.form.successful' | t }}</p>
+                  </div>
+                </div>
+              {% endif %}
+              <div class="">
+                <div class="flex mb-3 last:mb-0">
+                  <div class="flex-1">
+                    <label for="contact_email" class="block uppercase text-xs font-bold mb-1">
+                      {{ 'general.form.email' | t }}
+                    </label>
+                    <input
+                      class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                      type="email"
+                      name="contact[email]"
+                      id="contact_email"
+                      placeholder="{{ 'general.form.email' | t }}"
+                      required
+                    >
+                  </div>
+                </div>
+                <div class="flex mb-3 gap-5 last:mb-0">
+                  <div class="flex-1">
+                    <label for="contact_name" class="block uppercase text-xs font-bold mb-1">{{ 'general.form.name' | t }}</label>
+                    <input
+                      class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                      type="text"
+                      name="contact[name]"
+                      id="contact_name"
+                      placeholder="{{ 'general.form.name' | t }}"
+                    >
+                  </div>
+                  <div class="flex-1">
+                    <label for="contact_last_name" class="block uppercase text-xs font-bold mb-1">{{ 'general.form.last_name' | t }}</label>
+                    <input
+                      class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                      type="text"
+                      name="contact[last_name]"
+                      id="contact_last_name"
+                      placeholder="{{ 'general.form.last_name' | t }}"
+                    >
+                  </div>
+                </div>
+                <div class="flex mb-3 last:mb-0">
+                  <div class="flex-1">
+                    <label for="contact_message" class="block uppercase text-xs font-bold mb-1">{{ 'general.form.message' | t }}</label>
+                    <textarea
+                      class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                      name="contact[body]"
+                      id="contact_message"
+                      rows="3"
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+
+                {% if block.settings.form_info != blank %}
+                  <div class="flex mb-3 flex-col last:mb-0">
+                    <div class="mb-2 last:mb-0 rich-text text-sm">
+                      {{ block.settings.form_info }}
+                    </div>
+                  </div>
+                {% endif %}
+
+                <div class="flex mb-3 last:mb-0">
+                  <div class="flex-1">
+                    <button type="submit" class="btn black grow text-base font-bold mt-3 w-full">
+                      <span> {{ 'general.form.send' | t }} </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            {% endform %}
+          </div>
+        {% else %}
+          <div class="flex-1 p-5 last-of-type:border-t last-of-type:border-t-slate-300 md:last-of-type:border-l-slate-300 md:last-of-type:border-l md:last-of-type:border-t-0">
+            {% if block.settings.title != blank %}
+              <h2 class="text-xl font-bold mb-3 md:text-2xl">
+                {{ block.settings.title }}
+              </h2>
+            {% endif %}
+
+            {% if block.settings.content != blank %}
+              <div class="rich-text">
+                {{ block.settings.content }}
+              </div>
+            {% endif %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Template page contact",
+  "tag": "section",
+  "class": "container",
+  "blocks": [
+    {
+      "name": "Formulario",
+      "type": "form",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "form_info",
+          "label": "Agregar información"
+        }
+      ]
+    },
+    {
+      "name": "Información",
+      "type": "info",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "== Título"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título"
+        },
+        {
+          "type": "header",
+          "content": "== Contenido"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Párrafo"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "== Escritorio"
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_top",
+      "label": "Espaciado superior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_bottom",
+      "label": "Espaciado inferior",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "== Mobile"
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_top",
+      "label": "Espaciado superior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_bottom",
+      "label": "Espaciado inferior",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

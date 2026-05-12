@@ -1,0 +1,96 @@
+<div class="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+  <div class="flex justify-between items-center mb-10 border-b-slate-300 border-b pb-5">
+    <h1 class="text-2xl font-bold text-monastery-black">
+      {{ 'account.customer_account.account_title' | t }}
+    </h1>
+
+    <a class="btn black text-sm font-bold" href="{{ routes.account_logout_url }}">
+      <span>
+        {{ 'account.customer_account.logout' | t }}
+      </span>
+    </a>
+  </div>
+
+  <div class="block md:flex gap-4">
+    {% assign number_of_orders = customer.orders | size %}
+    {% if number_of_orders > 0 %}
+      <div class="w-full">
+        <h2 class="text-xl font-bold text-monastery-black mb-12">
+          {{ 'account.customer_account.order_history' | t }}
+        </h2>
+
+        {% paginate customer.orders by 10 %}
+          <div class="mt-6 overflow-x-auto">
+            <table class="table-auto border-collapse w-full rounded-t-lg overflow-hidden">
+              <thead class="bg-monastery-black">
+                <tr>
+                  <th class="border-b font-medium p-4 py-3 text-monastery-white text-center">
+                    {{ 'account.order.order' | t }}
+                  </th>
+                  <th class="border-b font-medium p-4 py-3 text-monastery-white text-center">
+                    {{ 'account.order.creation_date' | t }}
+                  </th>
+                  <th class="border-b font-medium p-4 py-3 text-monastery-white text-center">
+                    {{ 'account.order.quantity_articles' | t }}
+                  </th>
+                  <th class="border-b font-medium p-4 py-3 text-monastery-white text-center">
+                    {{ 'account.order.total' | t }}
+                  </th>
+                  <th class="border-b font-medium p-4 py-3 text-monastery-white text-center">
+                    {{ 'account.order.more_info' | t }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in customer.orders %}
+                  <tr class="even:bg-gray-100">
+                    <td class="border-b border-slate-100 p-4 text-slate-500 text-center">
+                      {{ order.name | link_to: order.customer_url }}
+                    </td>
+                    <td class="border-b border-slate-100 p-4 text-center">
+                      {{ order.created_at | date: '%Y-%m-%d - %l:%M %p' }}
+                    </td>
+                    <td class="border-b border-slate-100 p-4 text-center">
+                      {{ order.item_count }}
+                      {{ 'account.order.articles' | t }}
+                    </td>
+                    <td class="border-b border-slate-100 p-4 text-center">
+                      {{ order.total_price | money }}
+                    </td>
+                    <td class="border-b border-slate-100 p-4 text-center">
+                      <a class="text-center" href="{{ order.customer_url }}">
+                        {%- render 'eye-icon', classNames: "m-auto w-6 h-6" -%}
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="max-w-6xl mx-auto">
+            {% render 'pagination', pagination: paginate %}
+          </div>
+        {% endpaginate %}
+      </div>
+    {% else %}
+      <div class="w-full h-80 flex items-center justify-center">
+        <h2 class="text-base md:text-2xl font-medium">
+          {{ 'account.customer_account.no_orders' | t }}
+        </h2>
+      </div>
+    {% endif %}
+
+    <div class="w-full md:w-1/4">
+      <h2 class="text-xl font-bold text-monastery-black mb-12">
+        {{ 'account.customer_account.account_details' | t }}
+      </h2>
+
+      {{ customer.default_address | format_address }}
+
+      <a href="{{ routes.account_addresses_url }}" class="text-sm text-blue-600 hover:text-blue-900 underline">
+        {{ 'account.customer_account.view_addresses' | t }}
+      </a>
+    </div>
+  </div>
+</div>

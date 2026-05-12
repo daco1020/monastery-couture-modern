@@ -1,0 +1,51 @@
+<div class="container flex flex-col items-center justify-center h-full py-10">
+  <div class="text-center">
+    <h1 class="block text-9xl my-2 font-black ">
+      404
+    </h1>
+    <p class="text-lg font-bold mb-6">
+      {{ "general.404.title" | t }}
+    </p>
+    <p class="text-base font-light">
+      {{ "general.404.subtext" | t }}
+    </p>
+    <a class="btn black grow mr-2 text-sm font-bold  mt-5" href="/">
+      <span>
+        {{ "general.404.button" | t }}
+      </span>
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Template 404",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "404",
+      "label": "404 heading title"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "default": "No se encontro la página que estas buscando.",
+      "label": "404 subtitle"
+    },
+    {
+      "type": "text",
+      "id": "content",
+      "default": "Regresa al inicio y continúa comprando.",
+      "label": "404 text"
+    },
+    {
+      "type": "text",
+      "id": "button",
+      "default": "VOLVER AL INICIO",
+      "label": "Button text"
+    }
+  ]
+}
+{% endschema %}

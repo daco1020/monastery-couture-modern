@@ -1,0 +1,108 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Monastery Couture Store",
+    "theme_version": "1.0.0",
+    "theme_author": "Subtexto",
+    "theme_documentation_url": "https://github.com/SebastianMG92/monastery-shopify-theme",
+    "theme_support_url": "https://github.com/SebastianMG92/monastery-shopify-theme/issues"
+  },
+  {
+    "name": "Logos",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "main_logo",
+        "label": "Main logo image",
+        "info": "Select the main logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "secondary_logo",
+        "label": "Secondary logo image",
+        "info": "Select the secondary logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "footer_logo_image",
+        "label": "Footer logo image",
+        "info": "Add footer logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Favicon imagen"
+      }
+    ]
+  },
+  {
+    "name": "Fonts",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "main_font",
+        "label": "Main font",
+        "default": "helvetica_n4"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "url",
+        "id": "facebook_url",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "instagram_url",
+        "label": "Instagram"
+      },
+      {
+        "type": "url",
+        "id": "youtube_url",
+        "label": "Youtube"
+      },
+      {
+        "type": "url",
+        "id": "tiktok_url",
+        "label": "TikTok"
+      }
+    ]
+  },
+  {
+    "name": "Copyright",
+    "settings": [
+      {
+        "type": "text",
+        "id": "copyright",
+        "label": "Copyright",
+        "default": "© MONASTERY COUTURE - [year]"
+      }
+    ]
+  },
+  {
+    "name": "Payments",
+    "settings": [
+      {
+        "type": "text",
+        "id": "payments",
+        "label": "Payments logos",
+        "info": "visa,master,american,apple",
+        "default": "visa,master,american,apple"
+      }
+    ]
+  },
+  {
+    "name": "Advance",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "custom_css",
+        "label": "Custom CSS"
+      }
+    ]
+  }
+]

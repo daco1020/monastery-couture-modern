@@ -1,0 +1,264 @@
+<div data-component="account" class="flex flex-col items-center justify-center h-full py-10 lg:py-20">
+  <h1 class="block text-center font-bold text-lg mb-10 md:text-2xl lg:text-4xl">
+    {{ 'account.form.account_title' | t }}
+  </h1>
+  <div class="w-full max-w-md">
+    <div class="flex mb-5 border-b border-b-monastery-gray/20">
+      <button data-tab-button data-target="login_form" class="flex-1 px-1 py-3 text-sm font-bold border-b-4 border-b-monastery-black" type="button">
+        {{ 'account.form.login' | t }}
+      </button>
+      <button data-tab-button data-target="register_form" class="flex-1 px-1 py-3 text-sm font-bold" type="button">
+        {{ 'account.form.register' | t }}
+      </button>
+    </div>
+
+    <div>
+      <div data-tab="login_form" class="">
+        {% form 'customer_login' %}
+          {% if form.errors %}
+            <div class="mb-5">
+              <div class="bg-rose-600 text-monastery-white p-3">
+                <div class="flex items-center mb-5">
+                  {% render 'error-icon' classNames: "w-10 h-10 mr-3" %}
+                  <p>
+                    {{ 'errors.form.error_form' | t }}
+                  </p>
+                </div>
+                <ul class="list-disc list-inside">
+                  {% for error in form.errors %}
+                    <li>
+                      {{ form.errors.messages[error] }}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="flex mb-3 last:mb-0">
+            <div class="flex-1">
+              <label for="email_address" class="block uppercase text-xs font-bold mb-1">
+                {{ 'account.form.email' | t }}
+              </label>
+              <input
+                type="email"
+                name="customer[email]"
+                id="email_address"
+                autocomplete="email"
+                class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                required
+              >
+            </div>
+          </div>
+
+          {% if form.password_needed %}
+            <div class="flex mb-3 last:mb-0">
+              <div class="flex-1">
+                <label for="password" class="block uppercase text-xs font-bold mb-1">
+                  {{ 'account.form.password' | t }}
+                </label>
+                <input
+                  type="password"
+                  name="customer[password]"
+                  id="password"
+                  autocomplete="current-password"
+                  class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                  required
+                >
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="flex mb-3 flex-col last:mb-0">
+            <div class="mb-2 last:mb-0 rich-text text-sm">
+              <a data-component="modal" data-width="450px" href="#forgot-password" class="underline text-gray-500 hover:text-gray-900">
+                {{ 'account.form.forgot_password' | t }}
+              </a>
+            </div>
+          </div>
+
+          <div class="flex mb-3 last:mb-0">
+            <div class="flex-1">
+              <button type="submit" class="btn black grow text-base font-bold mt-3 w-full">
+                <span> {{ 'account.form.login' | t }} </span>
+              </button>
+            </div>
+          </div>
+        {% endform %}
+      </div>
+
+      <div data-tab="register_form" class="hidden">
+        {% form 'create_customer' %}
+          {% if form.errors %}
+            <div class="mb-5">
+              <div class="bg-rose-600 text-monastery-white p-3">
+                <div class="flex items-center mb-5">
+                  {% render 'error-icon' classNames: "w-10 h-10 mr-3" %}
+                  <p>
+                    {{ 'errors.form.error_form' | t }}
+                  </p>
+                </div>
+                <ul class="list-disc list-inside">
+                  {% for error in form.errors %}
+                    <li>
+                      {{ form.errors.messages[error] }}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="flex mb-3 last:mb-0">
+            <div class="flex-1">
+              <label for="first_name" class="block uppercase text-xs font-bold mb-1">
+                {{ 'account.form.first_name' | t }}
+              </label>
+              <input
+                type="text"
+                name="customer[first_name]"
+                id="first_name"
+                autocomplete="given-name"
+                class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="flex mb-3 last:mb-0">
+            <div class="flex-1">
+              <label for="last_name" class="block uppercase text-xs font-bold mb-1">
+                {{ 'account.form.last_name' | t }}
+              </label>
+              <input
+                type="text"
+                name="customer[last_name]"
+                id="last_name"
+                autocomplete="family-name"
+                class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="flex mb-3 last:mb-0">
+            <div class="flex-1">
+              <label for="birthday" class="block uppercase text-xs font-bold mb-1">
+                {{ 'account.form.birthday' | t }}
+              </label>
+              <input
+                type="date"
+                name="customer[note][Birthday]"
+                id="birthday"
+                class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="flex mb-3 last:mb-0">
+            <div class="flex-1">
+              <label for="register_email_address" class="block uppercase text-xs font-bold mb-1">
+                {{ 'account.form.email' | t }}
+              </label>
+              <input
+                type="email"
+                name="customer[email]"
+                id="register_email_address"
+                autocomplete="email"
+                class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="flex mb-3 last:mb-0">
+            <div class="flex-1">
+              <label for="register_password" class="block uppercase text-xs font-bold mb-1">
+                {{ 'account.form.password' | t }}
+              </label>
+              <input
+                type="password"
+                name="customer[password]"
+                id="register_password"
+                autocomplete="new-password"
+                class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="flex mb-3 last:mb-0">
+            <div class="flex-1">
+              <button type="submit" class="btn black grow text-base font-bold w-full">
+                <span>
+                  {{ 'account.form.create_account' | t }}
+                </span>
+              </button>
+            </div>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="forgot-password" style="display: none">
+  <div class="inline-inner">
+    <h3 class="block font-bold text-lg mb-5 text-center">
+      {{ 'account.form.recover_password' | t }}
+    </h3>
+
+    <div class="rich-text">
+      {% form 'recover_customer_password' %}
+        {% if form.errors %}
+          <div class="mb-5">
+            <div class="bg-rose-600 text-monastery-white p-3 flex items-center">
+              {% render 'error-icon' classNames: "w-10 h-10 mr-3" %}
+              <p>
+                {{ 'errors.form.error_form' | t }}
+              </p>
+            </div>
+            <ul>
+              {% for error in form.errors %}
+                {{ form.errors.messages[error] }}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <div class="flex mb-3 last:mb-0">
+          <div class="flex-1">
+            <label for="email" class="block uppercase text-xs font-bold mb-1">
+              {{ 'account.form.email' | t }}
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              autocomplete="email"
+              class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="flex mb-3 last:mb-0">
+          <div class="flex-1">
+            <button type="submit" class="btn black grow text-base font-bold w-full uppercase">
+              <span>{{ 'account.form.recover_password' | t }}</span>
+            </button>
+          </div>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Template login",
+  "tag": "section",
+  "class": "container"
+}
+{% endschema %}

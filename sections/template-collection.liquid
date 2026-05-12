@@ -1,0 +1,116 @@
+{% liquid
+  assign subHeaderClasses = ''
+  assign subHeaderContainerClasses = ''
+  if collection.custom.banner
+    assign subHeaderClasses = 'md:basis-1/2'
+    assign subHeaderContainerClasses = 'md:text-left'
+  endif
+%}
+<div class="bg-monastery-black text-monastery-white text-center overflow-hidden mt-[75px] md:flex md:items-center md:flex-row-reverse md:max-h-80 {{ subHeaderContainerClasses }}">
+  {% if collection.metafields.custom.banner_coleccion %}
+    <figure class="aspect-[4/2] {{ subHeaderClasses }}">
+      {{
+        collection.metafields.custom.banner_coleccion
+        | image_url: width: 1024
+        | image_tag: loading: 'lazy', alt: collection.title, class: 'block h-full w-full object-cover object-center'
+      }}
+    </figure>
+  {% endif %}
+
+  <div class="container py-10" data-animate>
+    {% if collection.title %}
+      <h1 class="text-3xl font-bold md:text-5xl lg:text-7xl tracking-cinematic uppercase mb-4">
+        {{ collection.title }}
+      </h1>
+    {% endif %}
+
+    {% if collection.description %}
+      <div class="text-sm font-light opacity-70 max-w-2xl mx-auto">
+        {{ collection.description }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div
+  data-collection-container
+  class="relative after:content-[''] after:z-10 after:ease-in-out after:duration-150 after:absolute after:inset-0 after:pointer-events-none after:bg-monastery-white/30 after:backdrop-blur-sm after:opacity-0"
+>
+  <div class="border-b-slate-300 border-b py-4 bg-slate-100">
+    <div class="container flex justify-between items-center">
+      <div class="relative w-1/2 md:w-1/3">
+        <div class="flex items-center justify-start">
+          {% render 'sort-icon', classNames: 'w-5 h-5' %}
+          <select
+            data-collection-sort-select
+            class="btn bg-transparent max-w-sm uppercase w-36 text-xs font-bold !text-left appearance-none !outline-0 md:text-sm md:w-auto"
+          >
+            <option value="{{ option.value }}" selected disabled>
+              {{ 'collections.sort' | t }}
+            </option>
+            {% for option in collection.sort_options %}
+              <option value="{{ option.value }}">
+                {{ option.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="hidden text-center md:block md:w-1/3">
+        <p class="text-monastery-gray text-xs font-medium md:text-sm">
+          {{ collection.all_products_count }}
+          {{ 'collections.products' | t }}
+        </p>
+      </div>
+
+      <div class="w-1/2 text-right md:w-1/3">
+        <button data-filters-open-button class="btn-modern !text-[10px] !py-2">
+          <span class="flex items-center">
+            {% render 'filters-icon', classNames: 'w-4 h-4 mr-2' %}
+            {{ 'collections.filter' | t }}
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+  {% paginate collection.products by 8 %}
+    <div class="container py-8">
+      {% if collection.products.count > 0 %}
+        <div data-collection-products class="flex justify-center flex-wrap w-full gap-3">
+          {% for product in collection.products %}
+            <div class="w-[calc(50%_-_0.75rem)] lg:w-[calc(25%_-_0.75rem)]" data-animate>
+              {% render 'single-product', product: product, layout: 'grid' %}
+            </div>
+          {%- endfor -%}
+        </div>
+      {% else %}
+        <div class="flex flex-col items-center justify-center h-full">
+          <div class="text-center">
+            <h1 class="block text-xl font-black ">
+              {{ 'collections.empty_products' | t }}
+            </h1>
+            <a class="btn black grow mr-2 text-sm font-bold  mt-5" href="/">
+              <span>
+                {{ 'collections.go_back' | t }}
+              </span>
+            </a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if paginate.next %}
+      <div id="has-more-products" class="flex justify-center pt-20 pb-5" data-collection-observer>
+        {% render 'loader-icon', classNames: 'w-20 h-20' %}
+      </div>
+    {% endif %}
+  {% endpaginate %}
+</div>
+
+{% schema %}
+{
+  "name": "Template collection",
+  "tag": "section"
+}
+{% endschema %}

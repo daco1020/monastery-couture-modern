@@ -1,0 +1,280 @@
+{% assign headerClasses = 'bg-monastery-black' %}
+
+{% if section.settings.header_type == 'transparent' %}
+  {% assign headerClasses = 'bg-gradient-to-b from-monastery-black/50 to-monastery-black/0 hover:bg-monastery-black is-transparent' %}
+{% endif %}
+
+<div data-component="header" class="site-header pt-5 pb-5 lg:pt-0 lg:pb-0 transition-all duration-300 {{ headerClasses }}">
+  <div class="flex container min-h-[35px] align-center">
+    <!-- Menu button (Mobile) -->
+    <div class="basis-2/12 lg:!hidden">
+      <button
+        data-hamburger-button
+        class="hamburger hamburger--squeeze flex items-center lg:!hidden"
+        type="button"
+        aria-label="Abrir el menu principal"
+      >
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Store logo / Store Name -->
+    <div class="relative basis-8/12 flex items-center justify-center lg:basis-2/12 lg:justify-start">
+      {% if settings.main_logo.src %}
+        <a href="{{ routes.root_url }}" aria-label="Go to home">
+          <figure class="block mx-auto max-w-[150px] lg:max-w-[180px] js-header-main-logo">
+            {{ settings.main_logo.src | image_url: width: 250 | image_tag: loading: 'eager', alt: settings.main_logo.alt, class: 'block' }}
+          </figure>
+        </a>
+      {% else %}
+        <!-- Fallback if does'nt have logo -->
+        <h1 class="text-center text-monastery-white">
+          {{ shop.name }}
+        </h1>
+      {% endif %}
+    </div>
+
+    <!-- Desktop navigation -->
+    <div class="hidden basis-9/12 justify-center lg:flex lg:basis-9/12 2xl:basis-8/12">
+      <nav>
+        <ul class="flex justify-center">
+          {% for link in section.settings.menu.links %}
+            <li class="mx-2 lg:mx-3">
+              {% assign hasSubmenu = false %}
+              {% if link.links.size > 0 %}
+                {% assign hasSubmenu = true %}
+              {% endif %}
+              <a
+                {% if hasSubmenu %}
+                  data-submenu-name="{{- link.title -}}"
+                {% endif %}
+                class="block text-white text-xs font-semibold pt-8 pb-8 tracking-widest uppercase transition-all lg:border-b-2 lg:border-white/0 lg:hover:border-white/100 lg:text-sm js-header-submenuDesktopLink {% if link.active %}lg:border-white{% endif %}"
+                href="{{ link.url }}"
+              >
+                {{ link.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Icons -->
+    <div class="basis-2/12 flex justify-end items-center lg:basis-1/12 2xl:basis-2/12">
+      {%- if template == 'search' -%}
+        <a href="{{ routes.search }}" class="flex justify-end lg:ml-5" aria-label="Search">
+          {%- render 'search_icon', classNames: 'stroke-white h-5 w-5 ml-auto transition-colors hover:stroke-slate-400 lg:h-5 lg:w-5' -%}
+        </a>
+      {% else %}
+        <button data-search-button class="flex justify-end lg:ml-5" aria-label="Search">
+          {% render 'search_icon', classNames: 'stroke-white h-5 w-5 ml-auto transition-colors hover:stroke-slate-400 lg:h-5 lg:w-5' %}
+        </button>
+      {%- endif -%}
+
+      {% if shop.customer_accounts_enabled %}
+        {% if customer %}
+          <a class="justify-end ml-3 lg:ml-5" href="{{ routes.account_url }}" aria-label="Logout">
+            {% render 'user-logged-icon', classNames: 'stroke-white h-5 w-5 ml-auto transition-colors hover:stroke-slate-400 lg:h-5 lg:w-5' %}
+          </a>
+        {% else %}
+          <a class="justify-end ml-3 lg:ml-5" href="{{ routes.account_login_url }}" aria-label="Logout">
+            {% render 'user_icon', classNames: 'stroke-white h-5 w-5 ml-auto transition-colors hover:stroke-slate-400 lg:h-5 lg:w-5' %}
+          </a>
+        {% endif %}
+      {% endif %}
+
+      <div class="relative">
+        {%- if template == 'cart' -%}
+          <a href="{{ routes.cart_url }}" class="ml-2 flex justify-end lg:ml-5" aria-label="Cart">
+            {% render 'cart_icon', classNames: 'stroke-white h-5 w-5 ml-auto transition-colors hover:stroke-slate-400 lg:h-5 lg:w-5' %}
+          </a>
+        {% else %}
+          <button class="ml-2 flex justify-end lg:ml-5" data-cart-button aria-label="Cart">
+            {% render 'cart_icon', classNames: 'stroke-white h-5 w-5 ml-auto transition-colors hover:stroke-slate-400 lg:h-5 lg:w-5' %}
+          </button>
+        {%- endif -%}
+        <span
+          data-cart-quantity
+          class="absolute -top-2 -right-2 text-white text-[.60rem] w-3.5 h-3.5 flex justify-center items-center bg-rose-600 rounded-full"
+        >
+          {{ cart.item_count }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION WEB MENU -->
+  <nav class="fixed bottom-0 overflow-auto w-full pt-6 bg-monastery-black/[.97] -left-full after:content-[''] after:block after:absolute after:top-0 after:left-0 after:-right-0 after:w-full after:h-0.5 after:bg-monastery-white lg:absolute lg:after:hidden lg:pt-0 lg:left-0 lg:right-0 lg:w-full lg:top-full lg:bottom-auto lg:opacity-0 lg:pointer-events-none js-header-menu">
+    <div class="flex flex-col justify-between h-full">
+      <ul class="container lg:flex lg:justify-center lg:py-10">
+        {% for link in section.settings.menu.links %}
+          {% assign hasSubmenu = false %}
+          {% if link.links.size > 0 %}
+            {% assign hasSubmenu = true %}
+          {% endif %}
+          <li
+            data-submenu-name="{{- link.title -}}"
+            class="border-b-white/25 border-b last:border-b-white/0 lg:border-b-0  lg:w-full js-header-submenuDesktopItem lg:hidden"
+          >
+            <div class="flex flex-wrap justify-between w-full lg:w-auto lg:max-w-none">
+              <a
+                class="
+                  flex
+                  items-center
+                  {% if hasSubmenu %} {{ 'w-5/6' }} {% else %} {{ 'w-full' }} {% endif %}
+                  py-3
+                  text-white
+                  lg:py-0
+                  lg:w-full
+                "
+                href="{{ link.url }}"
+              >
+                {% if link.object.image %}
+                  <figure class="mr-3 pointer-events-none w-[50px] h-[50px] lg:mr-0 lg:w-[300px] lg:h-[300px]">
+                    {{
+                      link.object.image.src
+                      | image_url: width: '800x800'
+                      | image_tag: loading: 'lazy', alt: settings.main_logo.alt, class: 'block h-full object-cover object-center'
+                    }}
+                  </figure>
+                {% elsif link.object.metafields.custom.feature_image %}
+                  <figure class="mr-3 pointer-events-none w-[50px] h-[50px] lg:mr-0 lg:w-[300px] lg:h-[300px]">
+                    {{
+                      link.object.metafields.custom.feature_image
+                      | image_url: width: '800x800'
+                      | image_tag: loading: 'lazy', alt: settings.main_logo.alt, class: 'block h-full object-cover object-center'
+                    }}
+                  </figure>
+                {% endif %}
+                <span class="text-sm font-semibold  pointer-events-none lg:!hidden">
+                  {{ link.title }}
+                </span>
+              </a>
+              {% if hasSubmenu %}
+                <button class="text-white px-2 w-1/6 origin-center lg:hidden js-header-submenuMobileButton" aria-label="Open submenu">
+                  {% render 'chevron-down', classNames: 'h-4 w-4 ml-auto stroke-white pointer-events-none' %}
+                </button>
+              {% endif %}
+            </div>
+            {% if hasSubmenu %}
+              <ul class="w-full overflow-hidden max-h-0 lg:max-h-full lg:ml-5 {% if link.levels > 1 %}lg:flex lg:divide-x lg:divide-white/10{% endif %}">
+                {% for category_link in link.links %}
+                  <li class="first:pt-3 last:pb-3 lg:first:pt-0 lg:last:pb-0 lg:px-4">
+                    <a
+                      href="{{ category_link.url }}"
+                      class="block text-white px-3 py-2 w-full  {% if category_link.url == '#' %} font-semibold  text-sm{% else %}font-light  text-xs{% endif %}"
+                    >
+                      {{- category_link.title -}}
+                    </a>
+                    {% if category_link.links.size > 0 %}
+                      <ul>
+                        {% for child_link in category_link.links %}
+                          <li>
+                            <a href="{{ child_link.url }}" class="block text-white px-3 py-2 w-full text-xs font-light ">
+                              {{- child_link.title -}}
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="bg-monastery-black mt-16 py-6 lg:!hidden">
+        <ul class="container">
+          {% for link in section.settings.menu_help.links %}
+            <li>
+              <a
+                class="block text-white py-1 w-full text-xs "
+                href="{{ link.url }}"
+              >
+                {{ link.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if settings.favicon %}
+      "logo": {{ settings.favicon | image_url: width: 500 | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+      {{ settings.facebook_url | json }},
+      {{ settings.instagram_url | json }},
+      {{ settings.youtube_url | json }},
+      {{ settings.tiktok_url | json }}
+    ],
+    "url": {{ request.origin | append: page.url | json }}
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+  {% assign potential_action_target = request.origin | append: routes.search_url | append: '?q={search_term_string}' %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ request.origin | append: page.url | json }}
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "limit": 1,
+  "tag": "header",
+  "class": "header absolute top-0 left-0 right-0 z-40",
+  "settings": [
+    {
+      "type": "select",
+      "id": "header_type",
+      "label": "Tipo de header",
+      "options": [
+        {
+          "value": "black",
+          "label": "Negro"
+        },
+        {
+          "value": "transparent",
+          "label": "Transparente"
+        }
+      ],
+      "default": "black"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Heading Navigation Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_help",
+      "default": "main-menu",
+      "label": "Mobile Help Menu"
+    }
+  ]
+}
+{% endschema %}

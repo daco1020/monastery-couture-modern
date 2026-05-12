@@ -1,0 +1,46 @@
+<hr
+  class="custom-space border-none"
+  style="
+    --pt-mobile: {{ section.settings.p-t-mobile }}px;
+    --pb-mobile: {{ section.settings.p-b-mobile }}px;
+    --pt-desktop: {{ section.settings.p-t-desktop }}px;
+    --pb-desktop: {{ section.settings.p-b-desktop }}px;
+  "
+>
+
+{% schema %}
+{
+  "name": "Space",
+  "settings": [
+    {
+      "type": "number",
+      "id": "p-t-mobile",
+      "label": "Space top mobile",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "p-b-mobile",
+      "label": "Space bottom mobile",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "p-t-desktop",
+      "label": "Space top desktop",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "p-b-desktop",
+      "label": "Space bottom desktop",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Space"
+    }
+  ]
+}
+{% endschema %}

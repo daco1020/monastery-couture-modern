@@ -1,0 +1,21 @@
+{% if pagination.pages > 1 %}
+  <nav role="navigation" class="flex justify-center items-center my-8 mx-auto max-w-sm gap-3">
+    {% if pagination.previous %}
+      <a href="{{ pagination.previous.url }}" class="btn black grow text-base font-bold  mt-3 w-full group">
+        <span class="flex items-center justify-center">
+          {% render 'chevron-left', classNames: 'w-5 h-5 text-monastery-white ease-in-out duration-100 mr-2 group-hover:text-monastery-black' %}
+          {{ 'general.pagination.previous' | t }}
+        </span>
+      </a>
+    {% endif %}
+
+    {% if pagination.next %}
+      <a href="{{ pagination.next.url }}" class="btn black grow text-base font-bold  mt-3 w-full group">
+        <span class="flex items-center justify-center">
+          {{ 'general.pagination.next' | t }}
+          {% render 'chevron-right', classNames: 'w-5 h-5 text-monastery-white ease-in-out duration-100 ml-2 group-hover:text-monastery-black' %}
+        </span>
+      </a>
+    {% endif %}
+  </nav>
+{% endif %}

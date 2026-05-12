@@ -1,0 +1,67 @@
+<div class="bg-monastery-black text-monastery-white text-center overflow-hidden md:flex md:items-center md:flex-row-reverse md:max-h-80">
+  <div class="container py-5">
+    <h1 class="text-xl font-bold  md:text-2xl lg:text-4xl">
+      {{ section.settings.title }}
+    </h1>
+  </div>
+</div>
+
+<div class="container">
+  {% paginate collections by 9 %}
+    <div class="flex justify-center flex-wrap w-full gap-3">
+      {% for collection in collections %}
+        <div class="w-full text-center md:w-[calc(50%_-_0.75rem)] lg:w-[calc(33.333%_-_0.75rem)]">
+          <a href="{{ collection.url }}" class="block">
+            <div class="relative overflow-hidden aspect-square">
+              {% if collection.feature_image != blank %}
+                {% assign collection_image = collection.featured_image %}
+              {% elsif collection.image.src != blank %}
+                {% assign collection_image = collection.image.src %}
+              {% else %}
+                {% assign collection_image = collection.products.first.images[0] %}
+              {% endif %}
+
+              <figure class="skeleton absolute inset-0 w-full h-full">
+                {% if collection_image != blank %}
+                  {{
+                    collection_image
+                    | image_url: width: '1000x1000'
+                    | image_tag:
+                      loading: 'lazy',
+                      alt: collection.title,
+                      class: 'block h-full w-full object-cover object-center transition duration-1000 ease-in-out transform hover:scale-105'
+                  }}
+                {% endif %}
+              </figure>
+            </div>
+            <h2 class="uppercase text-xs font-bold text-center mb-1 md:text-lg">
+              {{ collection.title }}
+            </h2>
+            {% if collection.description %}
+              <div>
+                {{ collection.description }}
+              </div>
+            {% endif %}
+          </a>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {% render 'pagination', pagination: paginate %}
+  {% endpaginate %}
+</div>
+
+{% schema %}
+{
+  "name": "Template collections",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Colecciones"
+    }
+  ]
+}
+{% endschema %}

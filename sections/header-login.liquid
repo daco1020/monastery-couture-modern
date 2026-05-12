@@ -1,0 +1,28 @@
+<div class="pt-5 pb-5 lg:pt-0 lg:pb-0 bg-monastery-black">
+  <div class="flex container min-h-[75px] align-center justify-center">
+    <!-- Store logo / Store Name -->
+    <div class="relative flex items-center justify-center">
+      {% if settings.main_logo.src %}
+        <a href="{{ routes.root_url }}" aria-label="Go to home">
+          <figure class="block mx-auto max-w-[150px] lg:max-w-[180px] js-header-main-logo">
+            {{ settings.main_logo.src | image_url: width: 250 | image_tag: loading: 'eager', alt: settings.main_logo.alt, class: 'block' }}
+          </figure>
+        </a>
+      {% else %}
+        <!-- Fallback if does'nt have logo -->
+        <h1 class="text-center text-monastery-white">
+          {{ shop.name }}
+        </h1>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header invitado",
+  "limit": 1,
+  "tag": "header",
+  "class": "header absolute top-0 left-0 right-0 z-40"
+}
+{% endschema %}

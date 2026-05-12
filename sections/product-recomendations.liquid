@@ -1,0 +1,41 @@
+<div
+  class="product-recommendations relative w-full py-10 md:flex md:flex-wrap"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4&intent=related"
+>
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    <div class="flex w-full justify-center items-center pb-2 mb-5 border-b border-b-slate-200">
+      <div class="text-center">
+        {% if recommendations.intent == 'related' %}
+          <h4 class="text-xl font-bold  md:text-2xl">
+            {{ 'product.recomendations.also_like' | t }}
+          </h4>
+        {% elsif recommendations.intent == 'complementary' %}
+          <h4 class="text-xl font-bold  md:text-2xl">
+            {{ 'product.recomendations.complete_look' | t }}
+          </h4>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="flex justify-between flex-wrap w-full gap-3">
+      {%- for product in recommendations.products -%}
+        <div class="w-[calc(50%_-_0.75rem)] m-0 lg:w-[calc(25%_-_0.75rem)]">
+          {% render 'single-product', product: product, layout: 'grid' %}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Product recomendations",
+  "tag": "section",
+  "class": "container",
+  "presets": [
+    {
+      "name": "Product recomendations"
+    }
+  ]
+}
+{% endschema %}

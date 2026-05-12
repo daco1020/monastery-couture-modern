@@ -1,0 +1,136 @@
+<div class="container">
+  <div class="w-full max-w-lg m-auto">
+    {% form 'contact' %}
+      {% if form.errors %}
+        <div class="mb-5">
+          <div class="bg-rose-600 text-monastery-white p-3">
+            <div class="flex items-center mb-5">
+              {% render 'error-icon' classNames: "w-10 h-10 mr-3" %}
+              <p>
+                {{ 'errors.form.error_form' | t }}
+              </p>
+            </div>
+            <ul class="list-disc list-inside">
+              {% for error in form.errors %}
+                <li>
+                  {{ form.errors.messages[error] }}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% elsif form.posted_sucessfully? %}
+        <div class="mb-5">
+          <div class="bg-monastery-black text-monastery-white p-3 flex items-center">
+            {% render 'check-icon' classNames: "w-10 h-10 mr-3" %}
+            <p>
+              {{ 'general.form.successful' | t }}
+            </p>
+          </div>
+        </div>
+      {% endif %}
+      <div class="">
+        <div class="flex mb-3 last:mb-0">
+          <div class="flex-1">
+            <label for="contact_email" class="block uppercase text-xs font-bold mb-1">
+              {{ 'general.form.email' | t }}
+            </label>
+            <input
+              class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+              type="email"
+              name="contact[email]"
+              id="contact_email"
+              placeholder="{{ 'general.form.email' | t }}"
+              required
+            >
+          </div>
+        </div>
+        <div class="flex mb-3 gap-5 last:mb-0">
+          <div class="flex-1">
+            <label for="contact_name" class="block uppercase text-xs font-bold mb-1">
+              {{ 'general.form.name' | t }}
+            </label>
+            <input
+              class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+              type="text"
+              name="contact[name]"
+              id="contact_name"
+              placeholder="{{ 'general.form.name' | t }}"
+            >
+          </div>
+          <div class="flex-1">
+            <label for="contact_last_name" class="block uppercase text-xs font-bold mb-1">
+              {{ 'general.form.last_name' | t }}
+            </label>
+            <input
+              class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+              type="text"
+              name="contact[last_name]"
+              id="contact_last_name"
+              placeholder="{{ 'general.form.last_name' | t }}"
+            >
+          </div>
+        </div>
+        <div class="flex mb-3 last:mb-0">
+          <div class="flex-1">
+            <label for="contact_message" class="block uppercase text-xs font-bold mb-1">
+              {{ 'general.form.message' | t }}
+            </label>
+            <textarea
+              class="block w-full border border-monastery-black p-2 text-sm placeholder:text-sm"
+              name="contact[body]"
+              id="contact_message"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+        </div>
+
+        {% if section.blocks.size > 0 %}
+          <div class="flex mb-3 flex-col last:mb-0">
+            {% for info in section.blocks %}
+              <div class="mb-2 last:mb-0 rich-text text-sm">
+                {{ info.settings.form_info }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="flex mb-3 last:mb-0">
+          <div class="flex-1">
+            <button type="submit" class="btn black grow text-base font-bold mt-3 w-full">
+              <span>
+                {{ 'general.form.send' | t }}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    {% endform %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Formulario de contacto",
+  "tag": "section",
+  "blocks": [
+    {
+      "name": "Información",
+      "type": "info",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "form_info",
+          "label": "Agregar información"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Formulario de contacto"
+    }
+  ]
+}
+{% endschema %}

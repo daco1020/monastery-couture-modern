@@ -1,0 +1,151 @@
+<aside data-filters-sidebar class="fixed bg-monastery-white top-0 left-0 bottom-0 w-full z-50 max-w-0 opacity-0 overflow-auto max-h-screen">
+  <div class="h-full flex flex-col">
+    <div class="p-5 flex justify-between items-center text-left border-b border-b-slate-300 py-3 bg-monastery-black text-monastery-white">
+      <h6 class="text-sm font-bold ">
+        {{ 'collections.filters.filters' | t }}
+      </h6>
+      <button data-filters-close-button>
+        {% render 'close-icon', classNames: 'w-5 h-5' %}
+      </button>
+    </div>
+
+    <form data-filters-form class="px-5 py-6 grow flex flex-col">
+      {% if collection.filters.size > 1 %}
+        {%- for filter in collection.filters -%}
+          {% comment %}
+            The available filter should be hidde and by default it filter only the available products
+          {% endcomment %}
+          {% if filter.param_name == 'filter.v.availability' %}
+            <input type="hidden" name="filter.v.availability" value="1" id="Filter-filter.v.availability-1">
+          {% else %}
+            <div class="mb-5 last:mb-0">
+              <button type="button" class="group flex items-center justify-between w-full" data-component="accordion" open>
+                <p class="text-sm font-bold  flex items-center pointer-events-none">
+                  <span class="uppercase inline-block mr-1">{{ filter.label }}</span>
+                </p>
+                {% render 'chevron-right', classNames: 'h-5 w-5 block pointer-events-none group-open:hidden' %}
+                {% render 'chevron-down', classNames: 'h-5 w-5 hidden pointer-events-none group-open:block' %}
+              </button>
+              <div class="max-h-0 overflow-hidden ease-in-out duration-300" style="max-height: 100vh;">
+                <div class="py-3">
+                  {%- case filter.type -%}
+                    {%- when 'boolean' or 'list' -%}
+                      {% if filter.param_name == 'filter.p.m.custom.color' %}
+                        <ul class="flex flex-wrap">
+                          {%- for filter_value in filter.values -%}
+                            <li class="mb-4 mr-4">
+                              <div class="relative h-7 min-w-[1.75rem] w-max mr-2 last:mr-0">
+                                <input
+                                  data-filters-input
+                                  class="absolute invisible next-child:checked:after:border-monastery-gray/40 next-child:checked:after:border-2"
+                                  type="checkbox"
+                                  name="{{ filter_value.param_name }}"
+                                  value="{{ filter_value.value }}"
+                                  id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                                  {% if filter_value.active -%}
+                                    checked
+                                  {%- endif %}
+                                >
+                                <label
+                                  for="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                                  class="absolute inset-0 h-full w-full p-1 border border-monastery-black ease-in-out duration-150 rounded-full after:content-[''] after:absolute after:-inset-1.5 after:rounded-full"
+                                  style="background-color: #{{- filter_value.label -}}"
+                                >
+                                  <span class="hidden">
+                                    {{ filter_value.label }}
+                                  </span>
+                                </label>
+                              </div>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {% else %}
+                        <ul class="filter-group-display__list">
+                          {%- for filter_value in filter.values -%}
+                            <li class="mb-2 last:mb-0">
+                              <label class="flex items-center relative" for="Filter-{{ filter.param_name }}-{{ forloop.index }}">
+                                <input
+                                  data-filters-input
+                                  class="absolute opacity-0 inset-0 next-child:checked:after:opacity-100"
+                                  type="checkbox"
+                                  name="{{ filter_value.param_name }}"
+                                  value="{{ filter_value.value }}"
+                                  id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                                  {% if filter_value.active -%}
+                                    checked
+                                  {%- endif %}
+                                >
+                                <div
+                                  class="relative mr-2 w-5 h-5 bg-monastery-gray/10 hover:bg-monastery-gray/20 after:content-[''] after:absolute after:top-[4px] after:left-[8px] after:rotate-45 after:w-[5px] after:h-[10px] after:border-r-monastery-black after:border-b-monastery-black after:border-r-2 after:border-b-2 after:opacity-0"
+                                ></div>
+                                <span class="text-sm">
+                                  {{ filter_value.label }}
+                                </span>
+                              </label>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {% endif %}
+                    {%- when 'price_range' -%}
+                      <div class="flex">
+                        <div>
+                          <label class="text-sm" for="Filter-{{ filter.min_value.param_name }}">Desde:</label>
+                          <div>
+                            <span>{{ cart.currency.symbol }}</span>
+                            <input
+                              data-filters-input
+                              name="{{ filter.min_value.param_name }}"
+                              id="Filter-{{ filter.min_value.param_name }}"
+                              {% if filter.min_value.value -%}
+                                value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                              {%- endif %}
+                              type="number"
+                              placeholder="0"
+                              min="0"
+                              max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                            >
+                          </div>
+                        </div>
+                        <div class="filter-group-display__price-range-to">
+                          <label for="Filter-{{ filter.max_value.param_name }}">Hasta</label>
+
+                          <div>
+                            <span>{{ cart.currency.symbol }}</span>
+                            <input
+                              data-filters-input
+                              name="{{ filter.max_value.param_name }}"
+                              id="Filter-{{ filter.max_value.param_name }}"
+                              {% if filter.max_value.value -%}
+                                value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                              {%- endif %}
+                              type="number"
+                              placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                              min="0"
+                              max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                            >
+                          </div>
+                        </div>
+                      </div>
+                  {%- endcase -%}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {%- endfor -%}
+
+        <div class="mt-auto border-t border-t-slate-300 pt-3 flex justify-between items-center">
+          <button type="submit" class="btn black text-base font-bold ">
+            <span>
+              {{ 'collections.filters.apply_filter_button' | t }}
+            </span>
+          </button>
+          <a href="{{ collection.url }}?sort_by={{ collection.sort_by }}" class="text-sm underline">
+            {{- 'collections.filters.clear_filters_button' | t -}}
+          </a>
+        </div>
+      {% else %}
+        {{ 'collections.filters.filters_empty' | t }}
+      {% endif %}
+    </form>
+  </div>
+</aside>

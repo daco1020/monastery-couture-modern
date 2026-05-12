@@ -1,0 +1,388 @@
+<div
+  class="custom-space relative w-full md:flex md:flex-wrap"
+  style="--pt-desktop:{{ section.settings.desktop_offset_top }}px;--pb-desktop:{{ section.settings.desktop_offset_bottom }}px;--pt-mobile:{{ section.settings.mobile_offset_top }}px;--pb-mobile:{{ section.settings.mobile_offset_bottom }}px"
+>
+  {% if section.blocks.size > 0 %}
+    <div class="flex w-full flex-col justify-center pb-2 border-b border-b-slate-200 mb-3 md:flex-row md:justify-between md:items-center">
+      <div class="text-center md:text-left">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'custom_text_title' %}
+              <h2
+                class="custom-format"
+                style="
+                  --fs-desktop: {{- block.settings.desktop_font_size -}}px;
+                  --fs-mobile: {{- block.settings.mobile_font_size -}}px;
+
+                  --fw-desktop: {{- block.settings.desktop_font_weight -}};
+                  --fw-mobile: {{- block.settings.mobile_font_weight -}};
+
+                  --ls-desktop: {{- block.settings.desktop_letter_spacing -}}px;
+                  --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
+                "
+              >
+                {{ block.settings.title }}
+              </h2>
+            {% when 'custom_sub_title' %}
+              <div
+                class="custom-format text-monastery-gray"
+                style="
+                  --fs-desktop: {{- block.settings.desktop_font_size -}}px;
+                  --fs-mobile: {{- block.settings.mobile_font_size -}}px;
+
+                  --fw-desktop: {{- block.settings.desktop_font_weight -}};
+                  --fw-mobile: {{- block.settings.mobile_font_weight -}};
+
+                  --ls-desktop: {{- block.settings.desktop_letter_spacing -}}px;
+                  --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
+                "
+              >
+                {{ block.settings.content }}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+      <div class="text-center leading-none md:text-right">
+        {% for block in section.blocks %}
+          {% if block.type == 'button_link' %}
+            {% unless block.settings.link == blank %}
+              <a
+                href="{{ block.settings.link }}"
+                class="btn black mt-2 custom-format"
+                style="
+                  --fs-desktop: {{- block.settings.desktop_font_size -}}px;
+                  --fs-mobile: {{- block.settings.mobile_font_size -}}px;
+
+                  --fw-desktop: {{- block.settings.desktop_font_weight -}};
+                  --fw-mobile: {{- block.settings.mobile_font_weight -}};
+
+                  --ls-desktop: {{- block.settings.desktop_letter_spacing -}}px;
+                  --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
+                "
+                {% if block.settings.is_blank %}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                {% endif %}
+              >
+                <span>{{ block.settings.label }}</span>
+              </a>
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="flex justify-center flex-wrap w-full gap-3">
+    {%- for product in section.settings.product_list -%}
+      {%- if product != blank -%}
+        <div class="w-[calc(50%_-_0.75rem)] m-0 md:w-[calc(33.333%_-_0.75rem)]">
+          {% render 'single-product', product: product, layout: 'grid' %}
+        </div>
+      {% endif %}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Products grid (2 columns)",
+  "tag": "section",
+  "class": "container",
+  "blocks": [
+    {
+      "name": "Título",
+      "type": "custom_text_title",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Título",
+          "default": "TITULO"
+        },
+        {
+          "type": "header",
+          "content": "== Configuración escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuración teléfono"
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "Sub título",
+      "type": "custom_sub_title",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "content",
+          "type": "richtext",
+          "label": "Sub título",
+          "default": "<p>Lorem ipsum dolor sit amet</p>"
+        },
+        {
+          "type": "header",
+          "content": "== Configuración escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuración teléfono"
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "Link",
+      "type": "button_link",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Abrir en una nueva pestaña",
+          "default": false
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Botón",
+          "default": "BOTON"
+        },
+        {
+          "type": "header",
+          "content": "== Configuración escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuración teléfono"
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "id": "product_list",
+      "type": "product_list",
+      "label": "Products",
+      "limit": 2
+    },
+    {
+      "type": "header",
+      "content": "== Escritorio"
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_top",
+      "label": "Espaciado superior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_bottom",
+      "label": "Espaciado inferior",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "== Mobile"
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_top",
+      "label": "Espaciado superior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_bottom",
+      "label": "Espaciado inferior",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Products grid (2 columns)"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,48 @@
+<div data-search-sidebar class="fixed inset-0 w-full h-full z-50 opacity-1 overflow-auto bg-monastery-black/100 max-h-0">
+  <div class="p-5 text-white max-w-5xl m-auto">
+    <div class="flex justify-end items-center text-left py-3 ">
+      <button data-search-close aria-label="Close search">
+        {% render 'close-icon', classNames: 'w-5 h-5' %}
+      </button>
+    </div>
+
+    <form class="py-10" action="{{ routes.search_url }}">
+      <div class="flex items-center border border-slate-300 rounded-3xl px-3 mb-10">
+        <label for="q">
+          {% render 'search_icon', classNames: 'stroke-white h-6 w-6 transition-colors hover:stroke-slate-400' %}
+        </label>
+        <input
+          data-search-input
+          class="grow bg-transparent p-3 focus:outline-none"
+          type="search"
+          name="q"
+          id="q"
+          placeholder="{{ "search.search_by_keywords" | t }}"
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="mb-5">
+        <p class="text-lg font-bold ">{{ 'search.products' | t }}</p>
+
+        <div class="searchContainer" data-search-results>
+          <div data-search-products class="py-5 justify-between flex-wrap w-full gap-3 hidden searchContainer__products"></div>
+
+          <div class="hidden searchContainer__submit text-center">
+            <button class="btn white mt-2 text-sm font-bold  md:text-base" type="submit">
+              <span> {{ 'search.view_all' | t }} </span>
+            </button>
+          </div>
+
+          <p class="hidden py-3 searchContainer__empty">
+            {{ 'search.empty' | t }}
+          </p>
+
+          <div class="searchContainer__loading hidden">
+            {% render 'loader-icon', classNames: 'w-20 h-20', color: '#fff' %}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

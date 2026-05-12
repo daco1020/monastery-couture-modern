@@ -1,0 +1,86 @@
+{%- if product.metafields.custom.size_guide.value != blank -%}
+<div
+  data-size-guide
+  data-size-guide-data='{{ product.metafields.custom.size_guide.value.metafields.custom | json }}'
+  data-translations='
+  {
+    "man": "{{ 'product.single.man' | t }}",
+    "woman": "{{ 'product.single.woman' | t }}"
+  }'
+  class="fixed top-0 right-0 bottom-0 w-full h-full z-50 max-w-0 opacity-0 overflow-auto size-guide transition-all duration-500 ease-out-expo"
+>
+  <div class="relative min-h-full glass-dark flex flex-col">
+    <div class="flex justify-between items-center text-left border-b border-white/10 py-5 px-6">
+      <p class="text-sm font-bold tracking-cinematic uppercase">
+        {{ 'product.single.size_guide' | t }}
+      </p>
+      <button data-size-guide-close-button aria-label="Close guide" class="transition-transform hover:rotate-90">
+        {% render 'close-icon', classNames: 'w-5 h-5 text-white' %}
+      </button>
+    </div>
+
+    <div class="px-5 py-10">
+        <div>
+          <form data-size-guide-form>
+            <div class="mb-8">
+              <h6 class="text-xl font-bold tracking-cinematic uppercase mb-4">
+                {{ 'product.single.find_your_size' | t }}
+              </h6>
+              <p class="text-xs tracking-widest opacity-40 uppercase leading-relaxed">
+                {{ 'product.single.find_your_size_description' | t }}
+              </p>
+            </div>
+
+            <div class="mb-5">
+              <h6 class="text-sm font-bold mb-4 uppercase">
+                {{ 'product.single.silhouette_type' | t }}
+              </h6>
+              <div class="flex" data-size-guide-form-genre>
+              </div>
+            </div>
+
+            <div class="mb-5">
+              <h6 class="text-sm font-bold mb-4 uppercase">
+                {{ 'product.single.size' | t }}
+              </h6>
+              <div data-size-guide-form-sizes>
+              </div>
+            </div>
+            
+            <div class="relative pt-8 pb-10 mx-auto max-w-[275px]">
+              <figure class="size-guide-image" data-size-guide-form-images>
+
+                {%- if product.metafields.custom.size_guide.value.metafields.custom.image_men.value != blank -%}
+                    {{
+                      product.metafields.custom.size_guide.value.metafields.custom.image_men.value
+                      | image_url: width: 500
+                      | image_tag: loading: 'eager', alt: collection.title, class: 'block'
+                    }}
+                  {% else %}
+                    <img src="{{ 'men_size_guide.png' | asset_url }}"  loading="lazy" />
+                {%- endif -%}
+
+                {%- if product.metafields.custom.size_guide.value.metafields.custom.image_women.value != blank -%}
+                  {{
+                    product.metafields.custom.size_guide.value.metafields.custom.image_women.value
+                    | image_url: width: 500
+                    | image_tag: loading: 'eager', alt: collection.title, class: 'block'
+                  }}
+                {% else %}
+                    <img src="{{ 'women_size_guide.png' | asset_url }}" loading="lazy" />
+                {%- endif -%}
+              </figure>
+
+              <div class="absolute inset-0" data-size-guide-form-locations >
+              </div>
+            </div>
+          </form>
+
+          <div class="rich-text overflow-hidden text-sm size-guide-information">
+            {{ product.metafields.custom.size_guide.value.content }}
+          </div>
+      </div>
+  </div>
+</div>
+
+{%- endif -%}

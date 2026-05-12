@@ -1,0 +1,12 @@
+{%- case media.media_type -%}
+    {%- when 'image' -%}
+        <img src="{{ media | image_url: large }}" alt="{{ media.preview_image.alt }}" loading="lazy" class="{{ classNames }}" />
+    {%- when 'external_video' -%}
+        {{ media | external_video_tag: class: classNames }}
+    {%- when 'video' -%}
+        {{ media | video_tag: muted: true, autoplay: autoplay, loop: true, class: classNames }}
+    {%- when 'model' -%}
+        {{ media | model_viewer_tag }}
+    {%- else -%}
+        {{ media | media_tag }}
+{%- endcase -%}

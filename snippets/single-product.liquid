@@ -1,0 +1,130 @@
+{% liquid
+  assign priceClasses = ''
+  assign tagsClasses = ''
+
+  if layout == 'grid'
+    assign priceClasses = 'flex flex-col md:flex-row'
+    assign tagsClasses = 'hidden md:block'
+  endif
+%}
+
+<div data-component="single-product">
+  <div class="relative singleProduct overflow-hidden aspect-[.8]">
+    <a class="relative block w-full h-full group" href="{{ product.url }}" data-product-image-container>
+      <figure class="skeleton absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out group-hover:opacity-0" data-product-image>
+        <img
+          src="{{ product.featured_image | image_url: width: 400 }}"
+          alt="{{ product.featured_image.alt }}"
+          srcset="{{ product.featured_image | image_url: width: 800 }} 800w"
+          loading="lazy"
+          class="h-full w-full object-cover object-center transition-transform duration-1000 group-hover:scale-110"
+        >
+      </figure>
+      {% if product.images.size > 1 %}
+        <figure class="skeleton absolute inset-0 w-full h-full opacity-0 transition-opacity duration-700 ease-in-out group-hover:opacity-100" data-product-image>
+          <img
+            src="{{ product.images[1] | image_url: width: 400 }}"
+            alt="{{ product.images[1].alt }}"
+            srcset="{{ product.images[1] | image_url: width: 800 }} 800w"
+            loading="lazy"
+            class="h-full w-full object-cover object-center transition-transform duration-1000 group-hover:scale-110"
+          >
+        </figure>
+      {% endif %}
+      <div class="hidden absolute flex-col top-1 right-1 mb-1 pointer-events-none empty:mb-0 lg:flex">
+        {%- unless product.available -%}
+          <span class="text-[.60rem] mb-1 pl-1 pr-1 border-l-4 border-rose-600 font-bold text-rose-600">
+            {{ 'product.single.sold_out' | t }}
+          </span>
+        {%- endunless -%}
+        {%- if product.price < product.compare_at_price -%}
+          <span class="text-[.60rem] mb-1 pl-1 pr-1 border-l-4 border-rose-600 font-bold text-rose-600">
+            {{ 'product.on_sale' | t }}
+          </span>
+        {%- endif -%}
+        {%- for tag in product.tags -%}
+          {%- if tag contains "TAG:" -%}
+            <span class="text-[.60rem] mb-1 pl-1 pr-1 border-l-4 border-monastery-black font-bold">
+              {{ tag | remove: 'TAG:' }}
+            </span>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </a>
+    {% form 'product', product, id: 'product-form', novalidate: 'novalidate' %}
+      <div class="absolute left-0 right-0 bottom-0 glass-dark text-white text-center p-3 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 singleProduct__variants hidden lg:block">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" id="Quantity-{{ product.id }}" value="1" min="1">
+        {% liquid
+          assign hasSizes = false
+          for option in product.options
+            if option == "Size"
+              assign hasSizes = true
+            endif
+          endfor
+        %}
+        {% if hasSizes %}
+          <span class="block text-[10px] font-bold tracking-widest uppercase mb-3 opacity-60">
+            {{ 'product.quick_add' | t }}
+          </span>
+          <div class="flex flex-wrap justify-center gap-2">
+            {%- for variantGroup in product.options_with_values -%}
+              {% if variantGroup.name == "Size" %}
+                {%- for variant in variantGroup.values -%}
+                  <button
+                    data-product-variant
+                    data-product-variant-id="{{ product.variants[forloop.index0].id }}"
+                    type="button"
+                    class="h-8 min-w-[2rem] px-2 flex justify-center items-center text-[10px] font-bold border border-white/20 transition-all hover:bg-white hover:text-black hover:border-white disabled:opacity-30 disabled:line-through"
+                    {% unless product.variants[forloop.index0].available %}disabled{% endunless %}
+                  >
+                    {{ variant }}
+                  </button>
+                {%- endfor -%}
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <button class="btn-modern accent !text-[10px] !py-2 w-full">{{ 'product.single.add_cart' | t }}</button>
+        {% endif %}
+      </div>
+    {% endform %}
+  </div>
+  <a href="{{ product.url }}" class="block py-3">
+    <div class="flex flex-wrap items-center leading-none empty:mb-0 lg:hidden">
+      {%- if product.price < product.compare_at_price -%}
+        <span class="text-[.60rem] mr-1 mb-1 pl-1 pr-1 border-l-4 border-rose-600 font-bold text-rose-600">ON SALE</span>
+      {%- endif -%}
+      {%- for tag in product.tags -%}
+        {%- if tag contains "TAG:" -%}
+          <span class="text-[.60rem] mr-1 mb-1 pl-1 pr-1 border-l-4 border-monastery-black font-bold {{ tagsClasses }}">
+            {{ tag | remove: 'TAG:' }}
+          </span>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <h2 class="text-[11px] font-bold uppercase tracking-cinematic mb-2 transition-colors hover:text-gold">{{ product.title }}</h2>
+    <div class="flex items-center space-x-3">
+      {%- if product.price < product.compare_at_price -%}
+        <span class="text-[10px] line-through opacity-40">{{ product.compare_at_price | money }}</span>
+        <span class="text-sm font-bold text-gold">{{ product.price | money }}</span>
+      {% else %}
+        <span class="text-sm font-bold">{{ product.price | money }}</span>
+      {%- endif -%}
+    </div>
+  </a>
+
+  <div class="flex flex-wrap">
+    {%- for alt_product in product.metafields.custom.alternative_color_products.value -%}
+      {%- if alt_product.available and alt_product.metafields.custom.color != blank -%}
+        <a
+          class="inline-block relative w-5 h-5 mr-2 mb-2 border border-monastery-black last:mr-0 rounded-full"
+          href="{{ alt_product.url }}"
+          aria-label="Go to product"
+        >
+          <span class="absolute inset-0 overflow-hidden rounded-full" style="background: #{{- alt_product.metafields.custom.color -}}"></span>
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>

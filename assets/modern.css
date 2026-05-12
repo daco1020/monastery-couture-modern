@@ -1,0 +1,237 @@
+/* 
+ * Monastery Couture - Modern CSS v1.0
+ * Design tokens, animations, and luxury UI enhancements
+ */
+
+:root {
+  /* Premium Palette */
+  --color-primary: #090909;
+  --color-primary-95: rgba(9, 9, 9, 0.95);
+  --color-secondary: #f8fafb;
+  --color-accent: #c9a96e; /* Gold accent */
+  --color-accent-hover: #b8944d;
+  --color-danger: #e11d48;
+  --color-text: #090909;
+  --color-text-muted: #5c5c5c;
+  --color-surface: #ffffff;
+  
+  /* Typography Scale */
+  --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-size-xs: clamp(0.7rem, 0.8vw, 0.75rem);
+  --font-size-sm: clamp(0.8rem, 0.9vw, 0.875rem);
+  --font-size-base: clamp(0.9rem, 1vw, 1rem);
+  --font-size-lg: clamp(1rem, 1.2vw, 1.125rem);
+  --font-size-xl: clamp(1.15rem, 1.5vw, 1.25rem);
+  --font-size-2xl: clamp(1.4rem, 2vw, 1.5rem);
+  --font-size-3xl: clamp(1.7rem, 2.5vw, 1.875rem);
+  --font-size-4xl: clamp(2rem, 3vw, 2.25rem);
+  --font-size-hero: clamp(2.5rem, 5vw, 4rem);
+  
+  /* Spacing */
+  --space-section: clamp(2rem, 5vw, 5rem);
+  
+  /* Transitions */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+
+  /* Animation Tokens */
+  --reveal-offset: 30px;
+  --reveal-duration: 0.8s;
+}
+
+/* Base Enhancements */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+/* Selection Color */
+::selection {
+  background: var(--color-accent);
+  color: var(--color-primary);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+/* Modern Loader - CSS Only */
+[data-loader].is-loading {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.modern-loader {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--color-accent);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Premium Button Enhancements */
+.btn-modern {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: var(--font-size-sm);
+  background: transparent;
+  border: 1px solid var(--color-surface);
+  color: var(--color-surface);
+  transition: all var(--duration-normal) var(--ease-out-expo);
+  cursor: pointer;
+}
+
+.btn-modern:hover {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.btn-modern.accent {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn-modern.accent:hover {
+  background: var(--color-accent);
+  color: var(--color-primary);
+}
+
+/* Reveal Animations */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(var(--reveal-offset));
+  transition: opacity var(--reveal-duration) var(--ease-out-quint), 
+              transform var(--reveal-duration) var(--ease-out-quint);
+}
+
+[data-animate].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-dark {
+  background: rgba(9, 9, 9, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Layout Utilities */
+.section-padding {
+  padding-top: var(--space-section);
+  padding-bottom: var(--space-section);
+}
+
+/* Header Enhancements */
+.site-header {
+  position: relative;
+  width: 100%;
+  z-index: 1000;
+  transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+.site-header.is-scrolled {
+  background: var(--color-primary-95) !important;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  box-shadow: var(--shadow-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.site-header.is-scrolled .js-header-submenuDesktopLink {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+}
+
+/* Typography Utilities */
+.text-gold { color: var(--color-accent); }
+.tracking-cinematic { letter-spacing: 0.2em; }
+.font-display { font-family: var(--font-display); }
+
+/* --- Fit Selector --- */
+.fit-card {
+    transition: all 0.5s var(--ease-out-quint);
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.fit-card:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-color: var(--color-gold) !important;
+    transform: translateY(-10px);
+}
+
+.fit-card.is-active {
+    border-color: var(--color-gold) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+}
+
+.fit-card__image-wrap {
+    background: #000 !important;
+}
+
+.fit-card__spec {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fit-card__cta {
+    color: var(--color-gold) !important;
+    border-bottom-color: var(--color-gold) !important;
+    font-size: 9px !important;
+    letter-spacing: 0.2em !important;
+}

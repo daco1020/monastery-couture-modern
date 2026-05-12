@@ -1,0 +1,583 @@
+{% assign selected_variant = product.selected_or_first_available_variant %}
+{% capture discount %}
+  {{ product.compare_at_price_max | minus: product.price | times: 100 | divided_by: product.compare_at_price_max }}%
+{% endcapture %}
+
+{% liquid
+  ###############################
+  # Tabs descriptions
+  ###############################
+  assign showProductDescriptionTab = false
+  assign showProductSizeTab = false
+  # TODO: Remove this when all products were migrated
+  assign showLegalAccordion = true
+
+  if product.metafields.custom.long_description != blank or product.metafields.custom.materials != blank or product.metafields.custom.washing_instructions != blank or product.metafields.custom.styling != blank
+    assign showProductDescriptionTab = true
+  endif
+
+  if product.metafields.custom.size_information != blank or product.metafields.custom.model_size != blank
+    assign showProductSizeTab = true
+  endif
+
+  if showProductDescriptionTab and showProductSizeTab
+    assign showLegalAccordion = false
+  endif
+%}
+
+<div
+  data-component="product"
+  data-url="{{ product.url }}"
+  data-section="{{ section.id }}"
+  data-handle="{{ product.title | handle }}"
+  class="relative w-full mt-[75px]"
+>
+  <div class="relative md:container lg:hidden">
+    <div id="products-slider" class="swiper relative">
+      <div class="swiper-wrapper">
+        {%- for media in product.media -%}
+          <div class="swiper-slide">
+            {% if media.media_type == 'image' %}
+              <a
+                data-product-modal-mobile
+                class="relative skeleton"
+                href="{{ media.src | image_url: width: 2800 }}"
+                data-type="image"
+                data-zoomable="true"
+                data-draggable="true"
+              >
+                {% render 'product-media', media: media, classNames: 'aspect-square object-cover' %}
+              </a>
+            {% else %}
+              <div class="relative">
+                {% render 'product-media', media: media, classNames: 'aspect-square object-cover', autoplay: true %}
+              </div>
+            {% endif %}
+          </div>
+        {%- endfor -%}
+      </div>
+      <button class="swiper-button-prev absolute top-1/2 left-1 z-10 bg-monastery-black p-1" aria-label="Go previous">
+        {% render 'chevron-left', classNames: 'w-5 h-5 text-white' %}
+      </button>
+      <button class="swiper-button-next absolute top-1/2 right-1 z-10 bg-monastery-black p-1" aria-label="Go next">
+        {% render 'chevron-right', classNames: 'w-5 h-5 text-white' %}
+      </button>
+    </div>
+    <div id="products-thumbnails" class="swiper mt-1 lg:hidden">
+      <div class="swiper-wrapper">
+        {%- for media in product.media -%}
+          <div class="swiper-slide">
+            {% render 'product-media', media: media, classNames: 'aspect-square object-cover', autoplay: false %}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <div class="container flex items-start flex-wrap py-5 lg:flex-row-reverse">
+    <div class="basis-full lg:sticky lg:basis-1/2 lg:top-[90px] lg:px-10 xl:top-[120px] xl:basis-3/7 xl:max-w-2xl xl:mx-auto">
+      {% form 'product', product, id: 'product-form', novalidate: 'novalidate' %}
+        <input type="hidden" name="id" value="{{ selected_variant.id }}">
+        <input type="hidden" name="quantity" id="Quantity-{{ section.id }}" value="1" min="1">
+
+        {% for block in section.blocks %}
+          {%- case block.type -%}
+            {%- when 'title' -%}
+              <h1 data-animate class="text-xl my-2 font-bold md:text-2xl lg:text-4xl tracking-tight">
+                {{ product.title }}
+              </h1>
+            {%- when 'variant_selector' -%}
+              <div class="my-3">
+                {% comment %} PRODUCT VARIANTS {% endcomment %}
+                {%- unless product.has_only_default_variant -%}
+                  {%- for option in product.options_with_values -%}
+                    <div data-product-variant class="mb-2 last:mb-0">
+                      <div class="flex justify-between items-center w-full mb-2">
+                        <p class="font-bold  text-sm lg:text-base">{{ option.name }}:</p>
+
+                        {% comment %} Size Guide Sidebar {% endcomment %}
+                        {%- if product.metafields.custom.size_guide.value and option.name == 'Size' -%}
+                          <button type="button" data-size-guide-button class="flex underline items-center font-bold text-sm">
+                            {% render 'size-icon', classNames: 'h-4 w-4 mr-1' %}
+                            {{ 'product.single.size_guide' | t }}
+                          </button>
+                        {%- endif -%}
+
+                      </div>
+                      <div class="relative flex flex-wrap">
+                        {%- for item in option.values -%}
+                          <div class="relative h-12 min-w-[3rem] w-max mr-2 last:mr-0">
+                            {% if product.variants[forloop.index0].available %}
+                              <input
+                                class="absolute invisible next-child:checked:bg-monastery-black next-child:checked:text-monastery-white next-child:checked:border-monastery-black"
+                                type="radio"
+                                id="{{ item }}"
+                                name="Variant-{{ option.name }}"
+                                value="{{ item | escape }}"
+                                {%- if option.selected_value == item -%}
+                                  checked
+                                {%- endif -%}
+                              >
+                              <label
+                                for="{{ item }}"
+                                class="static h-full w-full p-1 flex justify-center items-center text-sm font-light border border-slate-400 ease-in-out duration-150 font-semibold"
+                              >
+                                {{- item -}}
+                              </label>
+                            {% else %}
+                              <span class="absolute inset-0 flex justify-center items-center text-sm font-light border border-slate-400 ease-in-out duration-150 pointer-events-none opacity-30 line-through">
+                                {{- item -}}
+                              </span>
+                            {% endif %}
+                          </div>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                {%- endunless -%}
+
+                {% comment %} COLOR ALTERNATIVES {% endcomment %}
+                {%- if product.metafields.custom.alternative_color_products.value -%}
+                  <div class="mb-2 last:mb-0">
+                    <div class="flex items-center w-full mb-2">
+                      <p class="font-bold  text-sm mr-2 lg:text-base">Color:</p>
+                      <span class="text-sm font-bold text-monastery-gray lg:text-base"></span>
+                    </div>
+                    <div class="relative flex flex-wrap">
+                      {%- for alt_product in product.metafields.custom.alternative_color_products.value -%}
+                        {%- if alt_product.available -%}
+                          {%- for tag in alt_product.tags -%}
+                            {% if tag contains 'COLOR:' %}
+                              {%- assign alt_product_variant = tag | remove: 'COLOR:' -%}
+                            {% endif %}
+                          {%- endfor -%}
+                          <a
+                            class="mr-2 last:mr-0 w-20 h-20"
+                            href="{{ alt_product.url }}"
+                            title="{{ alt_product.title }}"
+                            data-alternative-color="{{ alt_product_variant }}"
+                          >
+                            <img
+                              src="{{ alt_product.featured_image | image_url: width: 150, height: 150, crop: 'center' }}"
+                              alt="{{ alt_product.title }}"
+                              loading="lazy"
+                            >
+                          </a>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- when 'price' -%}
+              <div data-animate id="price" class="my-2">
+                {% comment %} Original price {% endcomment %}
+                {%- if selected_variant.price < selected_variant.compare_at_price -%}
+                  <span class="text-base line-through font-semibold text-monastery-gray lg:text-lg">
+                    {{- selected_variant.compare_at_price | money -}}
+                  </span>
+                {%- endif -%}
+                {% comment %} Current price {% endcomment %}
+                <span class="text-base font-semibold lg:text-2xl text-gold">{{ selected_variant.price | money }}</span>
+              </div>
+            {%- when 'description' -%}
+              <div data-animate>
+                <div class="text-sm font-light py-6 border-b-slate-300 border-t opacity-80">
+                  {{ product.description }}
+                </div>
+              </div>
+            {%- when 'checkout_buttons' -%}
+              <div class="my-6 flex">
+                <button
+                  type="submit"
+                  name="add"
+                  class="btn black h-12 grow mr-2 text-sm font-bold  sm:text-base"
+                  {%- if selected_variant.available == false -%}
+                    disabled
+                  {%- endif -%}
+                >
+                  {%- if selected_variant.available == false -%}
+                    <span>
+                      {{ 'product.single.sold_out' | t }}
+                    </span>
+                  {% else %}
+                    <span>
+                      {{ 'product.single.add_cart' | t }}
+                    </span>
+                  {%- endif -%}
+                </button>
+              </div>
+            {%- when 'tags' -%}
+              <div class="flex flex-wrap items-center my-5">
+                {%- unless product.available -%}
+                  <span class="text-xs mr-3 pl-1 border-l-4 border-rose-600 font-bold text-rose-600">
+                    {{ 'product.single.sold_out' | t }}
+                  </span>
+                {%- endunless -%}
+                {%- if selected_variant.price < selected_variant.compare_at_price -%}
+                  <span class="text-xs mr-3 pl-1 border-l-4 border-rose-600 font-bold text-rose-600"> ON SALE </span>
+                {%- endif -%}
+                {%- for tag in product.tags -%}
+                  {% if tag contains 'TAG:' %}
+                    <span class="text-xs mr-3 pl-1 border-l-4 border-monastery-black font-bold">
+                      {{ tag | remove: 'TAG:' }}
+                    </span>
+                  {% endif %}
+                {%- endfor -%}
+              </div>
+          {%- endcase -%}
+        {% endfor %}
+      {% endform %}
+    </div>
+
+    {% comment %} Sticky Mobile Add to Cart {% endcomment %}
+    <div class="fixed bottom-0 left-0 right-0 z-50 glass-dark p-4 flex items-center justify-between lg:hidden translate-y-full transition-transform duration-300" data-sticky-atc>
+      <div class="flex flex-col">
+        <span class="text-[10px] uppercase tracking-widest opacity-60">{{ product.title | truncate: 25 }}</span>
+        <span class="text-sm font-bold text-gold">{{ selected_variant.price | money }}</span>
+      </div>
+      <button
+        type="button"
+        onclick="document.getElementById('product-form').submit()"
+        class="btn-modern accent !py-2 !px-6 !text-xs"
+      >
+        {{ 'product.single.add_cart' | t }}
+      </button>
+    </div>
+
+    <div class="basis-full lg:basis-1/2 xl:basis-4/7">
+      <div class="hidden lg:grid lg:grid-cols-2 lg:gap-5">
+        {%- for media in product.media -%}
+          {% if forloop.index == 1 and product.metafields.custom.gallery_start == 1 %}
+            <div class="col-span-full">
+              {% if media.media_type == 'image' %}
+                <a
+                  data-product-modal-desktop
+                  class="relative skeleton bg-center cursor-zoom-in block"
+                  href="{{ media.src | image_url: width: 2800 }}"
+                  data-type="image"
+                  data-zoomable="true"
+                  data-draggable="true"
+                  data-bg="{{ media.src | image_url: width: 1200 }}"
+                  onmousemove="window.$APP.handleZoomHover(event)"
+                >
+                  {% render 'product-media',
+                    media: media,
+                    classNames: 'block w-full h-full object-cover aspect-square opacity-100 transition hover:opacity-0'
+                  %}
+                </a>
+              {% else %}
+                <div class="col-span-1">
+                  {% render 'product-media', media: media, classNames: 'block w-full h-full object-cover aspect-square', autoplay: true %}
+                </div>
+              {% endif %}
+            </div>
+          {%- else -%}
+            <div class="col-span-1">
+              {% if media.media_type == 'image' %}
+                <a
+                  data-product-modal-desktop
+                  class="relative skeleton bg-center cursor-zoom-in block"
+                  href="{{ media.src | image_url: width: 2800 }}"
+                  data-type="image"
+                  data-zoomable="true"
+                  data-draggable="true"
+                  data-bg="{{ media.src | image_url: width: 1200 }}"
+                  onmousemove="window.$APP.handleZoomHover(event)"
+                >
+                  {% render 'product-media',
+                    media: media,
+                    classNames: 'block w-full h-full object-cover aspect-square opacity-100 transition hover:opacity-0'
+                  %}
+                </a>
+              {% else %}
+                <div class="col-span-1">
+                  {% render 'product-media', media: media, classNames: 'block w-full h-full object-cover aspect-square', autoplay: true %}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {%- endfor -%}
+      </div>
+
+      {% if section.settings.shipping != blank and showLegalAccordion %}
+        <div class="lg:mt-20 xl:max-w-3xl xl:mx-auto 2xl:max-w-4xl">
+          <button
+            data-component="accordion"
+            class="flex items-center text-sm font-semibold  px-2 py-6 w-full text-left border-y-slate-300 border-b first:border-t lg:py-10"
+          >
+            {{ section.settings.shipping.title }}
+            {% render 'chevron-down', classNames: 'h-4 w-4 ml-auto text-monastery-black pointer-events-none' %}
+          </button>
+          <div class="max-h-0 overflow-hidden ease-in-out duration-300">
+            <div class="rich-text px-2 py-5">
+              {{ section.settings.shipping.content }}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% comment %} Description Tabs {% endcomment %}
+  {% if showLegalAccordion == false %}
+    <div class="container tabs" data-component="tabs">
+      <div
+        class="relative flex overflow-x-auto hide-scroll border-b border-slate-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-1 after:bg-monastery-black tabs-buttons"
+        style="--width:0px;--left:0px"
+        data-tabs-buttons
+      >
+        {%- if showProductDescriptionTab -%}
+          <button
+            type="button"
+            data-tabs-button="detail"
+            class="block min-w-fit uppercase p-5 tracking-wide pb-2 font-thin text-base whitespace-nowrap"
+          >
+            {{ 'product.single.product_description' | t }}
+          </button>
+        {%- endif -%}
+
+        {%- if showProductSizeTab -%}
+          <button
+            type="button"
+            data-tabs-button="size"
+            class="block min-w-fit uppercase p-5 tracking-wide pb-2 font-thin text-base whitespace-nowrap"
+          >
+            {{ 'product.single.size_and_fit' | t }}
+          </button>
+        {%- endif -%}
+
+        {% if section.settings.shipping != blank %}
+          <button
+            type="button"
+            data-tabs-button="delivery"
+            class="block min-w-fit uppercase p-5 tracking-wide pb-2 font-thin text-base whitespace-nowrap"
+          >
+            {{ section.settings.shipping.title }}
+          </button>
+        {% endif %}
+      </div>
+
+      <div class="mt-5">
+        {%- if showProductDescriptionTab -%}
+          <div class="opacity-0 h-0 overflow-hidden tabs-panel" data-tabs-panel="detail">
+            <div class="px-2 py-5 lg:grid lg:grid-cols-3 lg:gap-x-12">
+              {% if product.metafields.custom.long_description != blank %}
+                <div class="mb-5 last:mb-0 lg:mb-0">
+                  <h3 class="block uppercase font-semibold text-base mb-1">{{ product.title }}</h3>
+                  <p class="text-sm font-light">
+                    {{- product.metafields.custom.long_description -}}
+                  </p>
+                </div>
+              {% endif %}
+
+              <div class="mb-5 last:mb-0 lg:mb-0">
+                {% if product.metafields.custom.materials != blank %}
+                  <div class="mb-5">
+                    <h3 class="block uppercase font-semibold text-sm mb-1">{{ 'product.single.materials' | t }}</h3>
+                    <p class="text-sm font-light">
+                      {{- product.metafields.custom.materials -}}
+                    </p>
+                  </div>
+                {% endif %}
+
+                {% if product.metafields.custom.washing_instructions != blank %}
+                  <div class="mb-5">
+                    <h3 class="block uppercase font-semibold text-sm mb-1">{{ 'product.single.washing_instructions' | t }}</h3>
+                    <p class="text-sm font-light">
+                      {{- product.metafields.custom.washing_instructions -}}
+                    </p>
+                  </div>
+                {% endif %}
+
+                {% if product.metafields.custom.styling != blank %}
+                  <div class="mb-5">
+                    <h3 class="block uppercase font-semibold text-sm mb-1">{{ 'product.single.styling' | t }}</h3>
+                    <p class="text-sm font-light">
+                      {{- product.metafields.custom.styling -}}
+                    </p>
+                  </div>
+                {% endif %}
+              </div>
+
+              {% if product.metafields.custom.image_description != blank %}
+                <div class="mb-5 last:mb-0 lg:mb-0">
+                  {{
+                    product.metafields.custom.image_description
+                    | image_url: width: 1024
+                    | image_tag: loading: 'lazy', alt: collection.title, class: 'block'
+                  }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if showProductSizeTab -%}
+          <div class="opacity-0 h-0 overflow-hidden tabs-panel" data-tabs-panel="size">
+            <div class="px-2 py-5 lg:grid lg:grid-cols-3 lg:gap-x-12">
+              <div class="mb-5 last:mb-0 lg:mb-0">
+                {% if product.metafields.custom.size_information != blank %}
+                  <div class="mb-5">
+                    <h3 class="block uppercase font-semibold text-sm mb-1">{{ 'product.single.fit_information' | t }}</h3>
+                    <ul class="text-sm font-light list-disc list-inside">
+                      {% for item in product.metafields.custom.size_information.value %}
+                        <li>
+                          {{- item -}}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+
+                {% if product.metafields.custom.model_size != blank %}
+                  <div class="mb-5">
+                    <h3 class="block uppercase font-semibold text-sm mb-1">{{ 'product.single.model_size' | t }}</h3>
+                    <ul class="text-sm font-light">
+                      {% for item in product.metafields.custom.model_size.value %}
+                        <li>
+                          {{- item -}}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+
+                {%- if product.metafields.custom.size_guide.value -%}
+                  <h3 class="block uppercase font-semibold text-sm mb-1">{{ 'product.single.size_guide_title' | t }}</h3>
+                  <button type="button" data-size-guide-button class="flex underline items-center font-bold text-sm">
+                    {% render 'size-icon', classNames: 'h-4 w-4 mr-1' %}
+                    {{ 'product.single.size_guide' | t }}
+                  </button>
+                {%- endif -%}
+              </div>
+
+              <div class=""></div>
+
+              {% if product.metafields.custom.model_image != blank %}
+                <div class="mb-5 last:mb-0 lg:mb-0">
+                  {{
+                    product.metafields.custom.model_image
+                    | image_url: width: 1024
+                    | image_tag: loading: 'lazy', alt: collection.title, class: 'block'
+                  }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {% if section.settings.shipping != blank %}
+          <div class="opacity-0 h-0 overflow-hidden tabs-panel" data-tabs-panel="delivery">
+            <div class="rich-text px-2 py-5 text-sm">
+              {{ section.settings.shipping.content }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <script type="application/json">
+    {{- product.variants | json -}}
+  </script>
+</div>
+
+{%- liquid
+  if product.selected_or_first_available_variant.featured_media
+    assign seo_media = product.selected_or_first_available_variant.featured_media
+  else
+    assign seo_media = product.featured_media
+  endif
+-%}
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org/",
+    "@type": "Product",
+    "name": {{ product.title | json }},
+    "url": {{ request.origin | append: product.url | json }},
+    {% if seo_media -%}
+      "image": [
+        {{ seo_media | image_url: width: 1920 | prepend: "https:" | json }}
+      ],
+    {%- endif %}
+    "description": {{ product.description | strip_html | json }},
+    {% if product.selected_or_first_available_variant.sku != blank -%}
+      "sku": {{ product.selected_or_first_available_variant.sku | json }},
+    {%- endif %}
+    "brand": {
+      "@type": "Brand",
+      "name": {{ product.vendor | json }}
+    },
+    "offers": [
+      {%- for variant in product.variants -%}
+        {
+          "@type" : "Offer",
+          {%- if variant.sku != blank -%}
+            "sku": {{ variant.sku | json }},
+          {%- endif -%}
+          {%- if variant.barcode.size == 12 -%}
+            "gtin12": {{ variant.barcode }},
+          {%- endif -%}
+          {%- if variant.barcode.size == 13 -%}
+            "gtin13": {{ variant.barcode }},
+          {%- endif -%}
+          {%- if variant.barcode.size == 14 -%}
+            "gtin14": {{ variant.barcode }},
+          {%- endif -%}
+          "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+          "price" : {{ variant.price | divided_by: 100.00 | json }},
+          "priceCurrency" : {{ cart.currency.iso_code | json }},
+          "url" : {{ request.origin | append: variant.url | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Product",
+  "tag": "section",
+  "blocks": [
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "variant_selector",
+      "name": "Variant Selector",
+      "limit": 1
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "checkout_buttons",
+      "name": "Checkout buttons",
+      "limit": 1
+    },
+    {
+      "type": "tags",
+      "name": "Tags",
+      "limit": 1
+    }
+  ],
+  "settings": [
+    {
+      "type": "page",
+      "id": "shipping",
+      "label": "Shipping and returns"
+    }
+  ]
+}
+{% endschema %}

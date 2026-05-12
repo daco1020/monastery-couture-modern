@@ -1,0 +1,103 @@
+<div data-cart class="container ">
+  {%- if cart.item_count > 0 -%}
+    <form
+      class="py-10 m-auto md:max-w-2xl lg:max-w-4xl lg:flex lg:items-start xl:max-w-6xl"
+      action="{{ routes.cart_url }}"
+      method="POST"
+      novalidate
+      onsubmit="
+        (function(){
+          window.$APP.setLoadingState()
+        })();
+      "
+    >
+      <div class="lg:basis-2/3">
+        <div class="flex justify-between items-center text-left border-b border-b-slate-300 py-3">
+          <h1 class="text-base font-bold ">{{ 'cart.general.your_products' | t }} ({{ cart.item_count }})</h1>
+          <a class="text-xs text-monastery-gray r" href="{{ routes.all_products_collection_url }}">
+            {{ 'cart.general.go_back' | t }}
+          </a>
+        </div>
+
+        <div>
+          {%- for item in cart.items -%}
+            {% render 'cart-item', item: item, line: forloop.index, layout: 'large' %}
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="lg:mt-3 lg:ml-10 lg:basis-1/3 lg:sticky lg:top-[90px] xl:ml-20 xl:top-[120px]">
+        <div class="bg-monastery-gray/10 p-5 mb-5 last:mb-0">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-b-slate-500">
+            <p class="r">
+              {{ 'cart.general.subtotal' | t }}
+            </p>
+            <span class="text-lg font-bold r">
+              {{ cart.total_price | money }}
+            </span>
+          </div>
+          <p class="text-xs r">
+            {{ 'cart.general.taxes' | t }}
+          </p>
+          <button type="submit" name="checkout" class="btn black grow mr-2 text-base font-bold  mt-3 w-full">
+            <span>
+              {{ 'cart.general.go_checkout' | t }}
+            </span>
+          </button>
+        </div>
+        <div class="bg-monastery-gray/10 p-5 mb-5 last:mb-0">
+          <div class="mb-3 pb-3 border-b border-b-slate-500 last:mb-0 last:border-0">
+            <h3 class="text-base font-bold  mb-3">
+              {{ 'cart.general.zip_code_title' | t }}
+            </h3>
+            <p class="text-sm ">
+              {{ 'cart.general.zip_code_content_html' | t }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mb-5 last:mb-0">
+          <h3 class="text-base font-bold  mb-3">
+            {{ 'cart.general.payment_methods' | t }}
+          </h3>
+          <div class="flex">
+            {% assign words = settings.payments | split: ',' %}
+            {% for word in words %}
+              {%- case word -%}
+                {%- when 'visa' -%}
+                  {% render 'visa-icon', classNames: 'mr-3' %}
+                {%- when 'master' -%}
+                  {% render 'master-icon', classNames: 'mr-3' %}
+                {%- when 'american' -%}
+                  {% render 'american-icon', classNames: 'mr-3' %}
+                {%- when 'apple' -%}
+                  {% render 'apple-icon', classNames: 'mr-3' %}
+              {%- endcase -%}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </form>
+  {%- else -%}
+    <div class="py-10 m-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl">
+      <div class="flex justify-between items-center text-left border-b border-b-slate-200 py-3">
+        <h1 class="text-lg my-2 font-bold ">
+          {{ 'cart.cart_page_empty.empty' | t }}
+        </h1>
+      </div>
+      <div class="text-left">
+        <a class="btn black text-sm font-bold  mt-8" href="{{ routes.all_products_collection_url }}">
+          <span>
+            {{ 'cart.cart_page_empty.button' | t }}
+          </span>
+        </a>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Template cart",
+  "tag": "section"
+}
+{% endschema %}

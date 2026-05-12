@@ -1,0 +1,79 @@
+{% if section.blocks.size > 0 %}
+  <div class="container border-b-slate-100/30 border-b bg-monastery-black">
+    <div data-component="announcements-slider" class="max-w-sm py-3 m-auto md:max-w-2xl">
+      <!-- Slider main container -->
+      <div class="swiper relative overflow-hidden" data-announcements-slide>
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper flex">
+          {% for block in section.blocks %}
+            <!-- Slides -->
+            <div class="swiper-slide px-5 flex justify-center items-center shrink-0 w-full">
+              {% if block.settings.link == blank %}
+                <div class="text-center text-monastery-white text-xs md:text-sm">
+                  {{ block.settings.message }}
+                </div>
+              {% else %}
+                <a
+                  class="text-center text-xs ease-in-out duration-100 text-monastery-white hover:text-monastery-gray md:text-sm"
+                  href="{{ block.settings.link }}"
+                  {% if block.settings.is_blank %}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  {% endif %}
+                >
+                  {{ block.settings.message }}
+                </a>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <button class="swiper-button-prev absolute top-1/2 left-0 z-10 p-1 -translate-y-1/2" aria-label="Go previous">
+          {% render 'chevron-left', classNames: 'w-5 h-5 text-monastery-white ease-in-out duration-100 hover:text-monastery-gray' %}
+        </button>
+        <button class="swiper-button-next absolute top-1/2 right-0 z-10 p-1 -translate-y-1/2" aria-label="Go next">
+          {% render 'chevron-right', classNames: 'w-5 h-5 text-monastery-white ease-in-out duration-100 hover:text-monastery-gray' %}
+        </button>
+
+        <!-- If we need scrollbar -->
+        <div class="swiper-scrollbar"></div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Anuncios",
+  "tag": "section",
+  "class": "bg-slate-50",
+  "blocks": [
+    {
+      "name": "Anuncio",
+      "type": "notification",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "message",
+          "label": "Mensaje"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Abrir en una nueva pestaña",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Anuncios"
+    }
+  ]
+}
+{% endschema %}

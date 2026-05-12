@@ -1,0 +1,1477 @@
+<div data-component="slider" class="relative w-full block">
+  <!-- Slider main container -->
+  <div class="swiper relative group sliderComponent" data-slide data-autoplay="5000">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+      <!-- Slides -->
+      {% for slide in section.blocks %}
+        {% liquid
+          # ** Pagination Color **
+          assign paginationClasses = 'var(--monastery-black)'
+
+          if slide.settings.pagination_color == 'WHITE'
+            assign paginationClasses = 'var(--monastery-white)'
+          endif
+
+          # ** Title Styles **
+          assign titleColor = 'text-monastery-black'
+
+          if slide.settings.title_color == 'WHITE'
+            assign titleColor = 'text-monastery-white'
+          endif
+
+          # ** Content Styles **
+          assign contentColor = 'text-monastery-black'
+
+          if slide.settings.content_color == 'WHITE'
+            assign contentColor = 'text-monastery-white'
+          endif
+
+          # ** Button Styles **
+          assign buttonColor = 'black'
+          assign buttonBorder = ''
+
+          case slide.settings.button_color
+            when "WHITE"
+              assign buttonColor = 'white'
+            else
+              assign buttonColor = 'black'
+          endcase
+          
+          case slide.settings.button_border
+            when "WHITE"
+              assign buttonBorder = 'btn-border btn-border__white'
+            when "BLACK"
+              assign buttonBorder = 'btn-border btn-border__black'
+            else
+              assign buttonBorder = ''
+          endcase
+        %}
+
+        {% case slide.type %}
+          {% when 'image_slide' %}
+              <div
+              class="swiper-slide"
+              data-color="{{ paginationClasses }}"
+              {% if slide.settings.delay %}
+                data-swiper-autoplay="{{ slide.settings.delay }}"
+              {% endif %}
+            >
+              {% if slide.settings.link %}
+                <a
+                  {% if slide.settings.is_blank %}
+                    target="_blank"
+                  {% endif %}
+                  href="{{ slide.settings.link }}"
+                  class="relative block overlay after:content-[''] after:absolute after:inset-0 after:bg-black h-full w-full pb-[150%] md:pb-[45.8%]"
+                  style="--overlay-opacity: {{ slide.settings.overlay }}"
+                > 
+                {% else %}
+                  <div
+                    class="relative block overlay after:content-[''] after:absolute after:inset-0 after:bg-black h-full w-full pb-[150%] md:pb-[45.8%]"
+                    style="--overlay-opacity: {{ slide.settings.overlay }}"
+                  > 
+              {% endif %}
+                <figure class="skeleton absolute inset-0">
+                  {% if slide.settings.mobile_image %}
+                      {{
+                        slide.settings.mobile_image.src
+                        | image_url: width: 720
+                        | image_tag:
+                          loading: 'eager',
+                          fetchpriority: 'high',
+                          alt: slide.settings.mobile_image.alt,
+                          class: 'block w-full h-full object-cover object-center md:hidden'
+                      }}
+                    {% else %}
+                        {{ 'image' | placeholder_svg_tag: 'block w-full h-full object-cover object-center md:hidden' }}
+                  {% endif %}
+                  {% if slide.settings.desktop_image %}
+                      {{
+                        slide.settings.desktop_image.src
+                        | image_url: width: 2400
+                        | image_tag:
+                          loading: 'eager',
+                          fetchpriority: 'high',
+                          alt: slide.settings.desktop_image.alt,
+                          class: 'hidden w-full h-full object-cover object-center md:block'
+                      }}
+                    {% else %}
+                        {{ 'image' | placeholder_svg_tag: 'hidden w-full h-full object-cover object-center md:block' }}
+                  {% endif %}
+                </figure>
+                <div
+                  data-animate
+                  class="custom-space max-w-full w-max absolute z-10 {{ slide.settings.mobile_vertical_alignment }} {{ slide.settings.mobile_horizontal_alignment }} {{ slide.settings.mobile_text_alignment }} {{ slide.settings.desktop_vertical_alignment }} {{ slide.settings.desktop_horizontal_alignment }} {{ slide.settings.desktop_text_alignment }}"
+                  style="--pt-desktop:{{ slide.settings.desktop_offset_top }}px;--pb-desktop:{{ slide.settings.desktop_offset_bottom }}px;--pl-desktop:{{ slide.settings.desktop_offset_left }}px;--pr-desktop:{{ slide.settings.desktop_offset_right }}px;--pt-mobile:{{ slide.settings.mobile_offset_top }}px;--pb-mobile:{{ slide.settings.mobile_offset_bottom }}px;--pl-mobile:{{ slide.settings.mobile_offset_left }}px;--pr-mobile:{{ slide.settings.mobile_offset_right }}px"
+                >
+                  {% if slide.settings.title != blank %}
+                    <h2 class="custom-format {{ titleColor }} tracking-cinematic"
+                      style="
+                        --fs-desktop: {{- slide.settings.desktop_title_font_size -}}px;
+                        --fs-mobile: {{- slide.settings.mobile_title_font_size -}}px;
+                        --fw-desktop: {{- slide.settings.desktop_title_font_weight -}};
+                        --fw-mobile: {{- slide.settings.mobile_title_font_weight -}};
+                        --ls-desktop: {{- slide.settings.desktop_title_letter_spacing -}}px;
+                        --ls-mobile: {{- slide.settings.mobile_title_letter_spacing -}}px;
+                      "
+                    >
+                      {{ slide.settings.title }}
+                    </h2>
+                  {% endif %}
+
+                  {% if slide.settings.content != blank %}
+                    <div 
+                      class="custom-format mt-1 {{ contentColor }} opacity-80"
+                      style="
+                        --fs-desktop: {{- slide.settings.desktop_content_font_size -}}px;
+                        --fs-mobile: {{- slide.settings.mobile_content_font_size -}}px;
+                        --fw-desktop: {{- slide.settings.desktop_content_font_weight -}};
+                        --fw-mobile: {{- slide.settings.mobile_content_font_weight -}};
+                        --ls-desktop: {{- slide.settings.desktop_content_letter_spacing -}}px;
+                        --ls-mobile: {{- slide.settings.mobile_content_letter_spacing -}}px;
+                      "
+                    >
+                      {{ slide.settings.content }}
+                    </div>
+                  {% endif %}
+
+                  {% if slide.settings.label != blank %}
+                    <span
+                      class="btn-modern mt-5 {% if buttonColor == 'white' %}accent{% endif %}"
+                      style="
+                        --fs-desktop: {{- slide.settings.desktop_button_font_size -}}px;
+                        --fs-mobile: {{- slide.settings.mobile_button_font_size -}}px;
+                        --fw-desktop: {{- slide.settings.desktop_button_font_weight -}};
+                        --fw-mobile: {{- slide.settings.mobile_button_font_weight -}};
+                        --ls-desktop: {{- slide.settings.desktop_button_letter_spacing -}}px;
+                        --ls-mobile: {{- slide.settings.mobile_button_letter_spacing -}}px;
+                      "
+                    >
+                      <span>{{ slide.settings.label }}</span>
+                    </span>
+                  {% endif %}
+                </div>
+              {% if slide.settings.link %}
+                </a>
+                {% else %}
+                </div>
+              {% endif %}
+            </div>
+          {% when 'video_slide' %}
+            <div
+              class="swiper-slide"
+              data-color="{{ paginationClasses }}"
+              {% if slide.settings.delay %}
+                data-swiper-autoplay="{{ slide.settings.delay }}"
+              {% endif %}
+            >
+              {% if slide.settings.link %}
+                <a
+                  class="relative block overlay after:content-[''] after:absolute after:inset-0 after:bg-black h-full w-full pb-[150%] md:pb-[45.8%]"
+                  style="--overlay-opacity: {{ slide.settings.overlay }}"
+                  href="{{ slide.settings.link }}"
+                  {% if slide.settings.is_blank %}
+                    target="_blank"
+                  {% endif %}
+                >
+              {% else %}
+                <div
+                  class="relative block overlay after:content-[''] after:absolute after:inset-0 after:bg-black h-full w-full pb-[150%] md:pb-[45.8%]"
+                  style="--overlay-opacity: {{ slide.settings.overlay }}"
+                >
+              {% endif %}
+                <div class="absolute inset-0">
+                  <video
+                    class="block w-full h-full object-cover object-center md:hidden"
+                    {% if slide.settings.mobile_poster_video != blank %}
+                      poster="{{ slide.settings.mobile_poster_video | image_url }}" 
+                    {% endif %}
+                    src="{{ slide.settings.mobile_video }}"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+
+                  <video
+                    class="hidden w-full h-full object-cover object-center md:block"
+                    {% if slide.settings.desktop_poster_video != blank %}
+                      poster="{{ slide.settings.desktop_poster_video | image_url }}" 
+                    {% endif %}
+                    src="{{ slide.settings.desktop_video }}"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+
+                <div
+                  class="custom-space max-w-full w-max absolute z-10 {{ slide.settings.mobile_vertical_alignment }} {{ slide.settings.mobile_horizontal_alignment }} {{ slide.settings.mobile_text_alignment }} {{ slide.settings.desktop_vertical_alignment }} {{ slide.settings.desktop_horizontal_alignment }} {{ slide.settings.desktop_text_alignment }}"
+                  style="--pt-desktop:{{ slide.settings.desktop_offset_top }}px;--pb-desktop:{{ slide.settings.desktop_offset_bottom }}px;--pl-desktop:{{ slide.settings.desktop_offset_left }}px;--pr-desktop:{{ slide.settings.desktop_offset_right }}px;--pt-mobile:{{ slide.settings.mobile_offset_top }}px;--pb-mobile:{{ slide.settings.mobile_offset_bottom }}px;--pl-mobile:{{ slide.settings.mobile_offset_left }}px;--pr-mobile:{{ slide.settings.mobile_offset_right }}px"
+                >
+                  {% if slide.settings.title != blank %}
+                    <h2 class="custom-format {{ titleColor }}"
+                      style="
+                        --fs-desktop: {{- slide.settings.desktop_title_font_size -}}px;
+                        --fs-mobile: {{- slide.settings.mobile_title_font_size -}}px;
+                        
+                        --fw-desktop: {{- slide.settings.desktop_title_font_weight -}};
+                        --fw-mobile: {{- slide.settings.mobile_title_font_weight -}};
+      
+                        --ls-desktop: {{- slide.settings.desktop_title_letter_spacing -}}px;
+                        --ls-mobile: {{- slide.settings.mobile_title_letter_spacing -}}px;
+                      "
+                    >
+                      {{ slide.settings.title }}
+                    </h2>
+                  {% endif %}
+                  {% if slide.settings.content != blank %}
+                    <div 
+                      class="custom-format mt-1 {{ contentColor }}"
+                      style="
+                        --fs-desktop: {{- slide.settings.desktop_content_font_size -}}px;
+                        --fs-mobile: {{- slide.settings.mobile_content_font_size -}}px;
+                        
+                        --fw-desktop: {{- slide.settings.desktop_content_font_weight -}};
+                        --fw-mobile: {{- slide.settings.mobile_content_font_weight -}};
+      
+                        --ls-desktop: {{- slide.settings.desktop_content_letter_spacing -}}px;
+                        --ls-mobile: {{- slide.settings.mobile_content_letter_spacing -}}px;
+                      "
+                    >
+                      {{ slide.settings.content }}
+                    </div>
+                  {% endif %}
+                  {% if slide.settings.label != blank %}
+                    <span
+                      class="btn mt-3 custom-format {{ buttonColor }} {{ buttonBorder }}"
+                      style="
+                        --fs-desktop: {{- slide.settings.desktop_button_font_size -}}px;
+                        --fs-mobile: {{- slide.settings.mobile_button_font_size -}}px;
+                        
+                        --fw-desktop: {{- slide.settings.desktop_button_font_weight -}};
+                        --fw-mobile: {{- slide.settings.mobile_button_font_weight -}};
+      
+                        --ls-desktop: {{- slide.settings.desktop_button_letter_spacing -}}px;
+                        --ls-mobile: {{- slide.settings.mobile_button_letter_spacing -}}px;
+
+                        --btn-opacity: {{- slide.settings.button_opacity -}};
+                        --border-size: {{- slide.settings.border_size -}}px;
+                      "
+                    >
+                      <span>{{ slide.settings.label }}</span>
+                    </span>
+                  {% endif %}
+                </div>
+              {% if slide.settings.link %}
+                </a>
+                {% else %}
+                </div>
+              {% endif %}
+            </div>
+        {% endcase %}
+      {% endfor %}
+    </div>
+
+    <button class="swiper-button-prev absolute top-1/2 left-1 z-10 bg-monastery-black p-1 -translate-y-1/2 md:opacity-0 group-hover:opacity-100 ease-in-out duration-150" aria-label="Go previous">
+      {% render 'chevron-left', classNames: 'w-5 h-5 text-white' %}
+    </button>
+    <button class="swiper-button-next absolute top-1/2 right-1 z-10 bg-monastery-black p-1 -translate-y-1/2 md:opacity-0 group-hover:opacity-100 ease-in-out duration-150" aria-label="Go next">
+      {% render 'chevron-right', classNames: 'w-5 h-5 text-white' %}
+    </button>
+
+    <div class="absolute bottom-0 left-0 w-full overflow-hidden z-30 py-3">
+      <div class="absolute inset-0 bg-monastery-black/30 backdrop-blur-sm"></div>
+      <div
+        class="swiper-progress absolute top-0 left-0 w-full h-1 after:content-[''] after:absolute after:inset-0 after:bg-monastery-white after:w-0"
+      ></div>
+      <div class="swiper-pagination relative left-0 bottom-0 w-full z-40 flex justify-center items-center"></div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero slider",
+  "tag": "section",
+  "blocks": [
+    {
+      "name": "Imagen",
+      "type": "image_slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "== Imagenes"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Imagen mobile"
+        },
+        {
+          "type": "image_picker",
+          "id": "desktop_image",
+          "label": "Imagen escritorio"
+        },
+        {
+          "type": "header",
+          "content": "== Título"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "TITULO"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "title_color",
+          "type": "radio",
+          "label": "Color del título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Sub título"
+        },
+        {
+          "id": "content",
+          "type": "richtext",
+          "label": "Texto",
+          "default": "<p>SUB TITULO</p>"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "content_color",
+          "type": "radio",
+          "label": "Color del sub título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Botón"
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Botón",
+          "default": "BOTON"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Abrir en una nueva pestaña",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "button_color",
+          "type": "radio",
+          "label": "Color del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "== Transparencia"
+        },
+        {
+          "type": "range",
+          "id": "button_opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Opacidad",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "== Borde"
+        },
+        {
+          "id": "button_border",
+          "type": "radio",
+          "label": "Borde del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            },
+            {
+              "value": "NONE",
+              "label": "Ninguno"
+            }
+          ],
+          "default": "NONE"
+        },
+        {
+          "type": "range",
+          "id": "border_size",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "unit": "px",
+          "label": "Grosor del borde",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuracion"
+        },
+        {
+          "id": "pagination_color",
+          "type": "radio",
+          "label": "Color de la paginación",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "number",
+          "id": "delay",
+          "label": "Autoplay",
+          "default": 5000,
+          "info": "Duración del slide en milisegundos"
+        },
+        {
+          "id": "overlay",
+          "type": "range",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Overlay opacity",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Escritorio"
+        },
+        {
+          "type": "select",
+          "id": "desktop_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "lg:top-0 lg:-translate-y-0 lg:bottom-[initial]",
+              "label": "Superior"
+            },
+            {
+              "value": "lg:top-1/2 lg:-translate-y-1/2 lg:bottom-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
+              "label": "Inferior"
+            }
+          ],
+          "default": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:left-1/2 lg:-translate-x-1/2 lg:right-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:right-0 lg:-translate-x-0 lg:left-[initial]",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:left-0 lg:-translate-x-0 lg:right-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "lg:text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:text-left"
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Mobile"
+        },
+        {
+          "type": "select",
+          "id": "mobile_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "top-0 -translate-y-0",
+              "label": "Superior"
+            },
+            {
+              "value": "top-1/2 -translate-y-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "bottom-0 -translate-y-0",
+              "label": "Inferior"
+            }
+          ],
+          "default": "bottom-0 -translate-y-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "left-0 -translate-x-0",
+              "label": "Izquierda"
+            },
+            {
+              "value": "left-1/2 -translate-x-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "right-0 -translate-x-0",
+              "label": "Derecha"
+            }
+          ],
+          "default": "left-0 -translate-x-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "text-left"
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "Video",
+      "type": "video_slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "== Videos"
+        },
+        {
+          "type": "url",
+          "id": "mobile_video",
+          "label": "Video mobile"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_poster_image",
+          "label": "Imagen respaldo video mobile"
+        },
+        {
+          "type": "url",
+          "id": "desktop_video",
+          "label": "Video escritorio"
+        },
+        {
+          "type": "image_picker",
+          "id": "desktop_poster_image",
+          "label": "Imagen respaldo video escritorio"
+        },
+        {
+          "type": "header",
+          "content": "== Título"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "TITULO"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "title_color",
+          "type": "radio",
+          "label": "Color del título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Sub título"
+        },
+        {
+          "id": "content",
+          "type": "richtext",
+          "label": "Texto",
+          "default": "<p>SUB TITULO</p>"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "content_color",
+          "type": "radio",
+          "label": "Color del sub título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Botón"
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Botón",
+          "default": "BOTON"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Abrir en una nueva pestaña",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "button_color",
+          "type": "radio",
+          "label": "Color del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "== Transparencia"
+        },
+        {
+          "type": "range",
+          "id": "button_opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Opacidad",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "== Borde"
+        },
+        {
+          "id": "button_border",
+          "type": "radio",
+          "label": "Borde del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            },
+            {
+              "value": "NONE",
+              "label": "Ninguno"
+            }
+          ],
+          "default": "NONE"
+        },
+        {
+          "type": "range",
+          "id": "border_size",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "unit": "px",
+          "label": "Grosor del borde",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuracion"
+        },
+        {
+          "id": "pagination_color",
+          "type": "radio",
+          "label": "Color de la paginación",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "number",
+          "id": "delay",
+          "label": "Autoplay",
+          "default": 5000,
+          "info": "Duración del slide en milisegundos"
+        },
+        {
+          "id": "overlay",
+          "type": "range",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Overlay opacity",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Escritorio"
+        },
+        {
+          "type": "select",
+          "id": "desktop_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "lg:top-0 lg:-translate-y-0 lg:bottom-[initial]",
+              "label": "Superior"
+            },
+            {
+              "value": "lg:top-1/2 lg:-translate-y-1/2 lg:bottom-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
+              "label": "Inferior"
+            }
+          ],
+          "default": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:left-1/2 lg:-translate-x-1/2 lg:right-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:right-0 lg:-translate-x-0 lg:left-[initial]",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:left-0 lg:-translate-x-0 lg:right-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "lg:text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:text-left"
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Mobile"
+        },
+        {
+          "type": "select",
+          "id": "mobile_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "top-0 -translate-y-0",
+              "label": "Superior"
+            },
+            {
+              "value": "top-1/2 -translate-y-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "bottom-0 -translate-y-0",
+              "label": "Inferior"
+            }
+          ],
+          "default": "bottom-0 -translate-y-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "left-0 -translate-x-0",
+              "label": "Izquierda"
+            },
+            {
+              "value": "left-1/2 -translate-x-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "right-0 -translate-x-0",
+              "label": "Derecha"
+            }
+          ],
+          "default": "left-0 -translate-x-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "text-left"
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slider"
+    }
+  ]
+}
+{% endschema %}

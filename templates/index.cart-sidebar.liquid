@@ -1,0 +1,57 @@
+{% layout none %}
+{%- if cart.item_count > 0 -%}
+  <form
+    data-cart-checkout
+    action="{{ routes.cart_url }}"
+    method="POST"
+    novalidate
+    onsubmit="
+      (function(){
+        window.$APP.setLoadingState()
+      })();
+    "
+  >
+    <div>
+      <div>
+        {%- for item in cart.items -%}
+          {% render 'cart-item', item: item, line: forloop.index, layout: 'small' %}
+        {%- endfor -%}
+      </div>
+    </div>
+    <div class="">
+      <div class="bg-monastery-gray/10 p-5 mb-5 last:mb-0">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-b-slate-500">
+          <p class="r">Subtotal:</p>
+          <span class="text-lg font-bold r">
+            {{ cart.total_price | money }}
+          </span>
+        </div>
+        <p class="text-xs r">* Impuestos, envío y descuentos calculados en el checkout.</p>
+        <a href="{{ routes.cart_url }}" class="btn white grow text-base font-bold  mt-3 w-full">
+          <span> IR A LA BOLSA </span>
+        </a>
+        <button type="submit" name="checkout" class="btn black grow text-base font-bold  mt-3 w-full">
+          <span> IR AL CHECKOUT </span>
+        </button>
+      </div>
+    </div>
+  </form>
+{%- else -%}
+  <div class="container py-10">
+    <div class="flex flex-col justify-center items-center text-center py-3">
+      <p class="text-xs my-2 font-bold ">
+        {% render 'cart_icon', classNames: 'stroke-black h-10 w-10 m-auto mb-5' %}
+        {{ 'cart.cart_page_empty.empty' | t }}
+      </p>
+      <a class="btn black text-sm font-bold  mt-5" href="{{ routes.root_url }}">
+        <span>
+          {{ 'cart.cart_page_empty.button' | t }}
+        </span>
+      </a>
+    </div>
+  </div>
+{%- endif -%}
+
+<script type="application/json">
+  {{- cart | json -}}
+</script>

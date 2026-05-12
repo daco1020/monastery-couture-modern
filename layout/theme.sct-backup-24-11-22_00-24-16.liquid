@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+  <!-- MANAGED BY LOCATION REDIRECT APP. DO NOT DELETE -->
+  {% if content_for_header contains 'adminBarInjector' %}
+  {% elsif content_for_header contains 'previewBarInjector' %}
+  {% elsif content_for_header contains 'Shopify.designMode = true' %}
+  {% elsif content_for_header contains '.shopifypreview.com' %}
+  {% else %}
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <script src="https://monasterycouture.myshopify.com/apps/locate?_p={{ request.path }}"></script>
+  {% endif %}
+  <!-- END LOCATION REDIRECT APP -->
+  <title>{{ page_title }}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="{{ page_description | escape }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    {{ 'base.aio.min.css' | asset_url | stylesheet_tag: preload: true }}
+    <link rel="preload" href="{{ 'app.aio.min.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {%- if settings.favicon != blank %}
+      <link rel="shortcut icon" type="image/png" href="{{ settings.favicon | image_url: width: 32 }}">
+      <link rel="apple-touch-icon-precomposed" type="image/png" sizes="152x152" href="{{ settings.favicon | image_url: width: 152 }}">
+    {% endif -%}
+    <style>
+      .pushdaddy-button-label, .pushdaddy-button-label1 { background-color: #000 !important; }
+    </style>
+    <!-- Header hook for plugins -->
+    {{ content_for_header }}
+    {{ settings.heading_font | asset_url | stylesheet_tag: preload: true }}
+  </head>
+
+  <body class="relative font-display w-full m-0 p-0 text-monastery-black overflow-x-hidden bg-slate-50">
+    <div id="root" class="relative overlay-hidden h-full min-h-screen flex flex-col">
+      {%- if template == 'index' -%}
+        <h1 class="sr-only">{{ shop.name }}</h1>
+      {%- endif -%}
+      {% section 'announcements-bar' %}
+      <main role="main" class="relative block grow shrink basis-0">
+        {{ content_for_layout }}
+      </main>
+      {% section 'footer' %}
+    </div>
+
+    <div
+      data-loader
+      class="flex items-center justify-center fixed inset-0 pointer-events-none z-[9998] bg-monastery-black/80 opacity-0 ease-in-out duration-150"
+    >
+      {% render 'loader-icon', classNames: 'w-20 h-20', color: 'white' %}
+    </div>
+    {% render 'cart-sidebar' %}
+    {% render 'search-sidebar' %}
+    <script src="{{ 'app.aio.min.js' | asset_url }}" defer></script>
+  </body>
+</html>

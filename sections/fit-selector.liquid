@@ -1,0 +1,254 @@
+{% comment %}
+  ============================================================
+  FIT SELECTOR SECTION — modernized for Monastery Couture
+  ============================================================
+{% endcomment %}
+
+<div class="fit-selector !bg-black text-white" id="fit-selector-{{ section.id }}">
+
+  {%- if section.settings.title != blank -%}
+    <div class="fit-selector__header max-w-4xl mx-auto mb-16 text-center" data-animate>
+      <p class="text-[10px] tracking-[0.3em] opacity-40 uppercase mb-4">{{ section.settings.eyebrow }}</p>
+      <h2 class="text-4xl md:text-7xl font-bold tracking-cinematic uppercase mb-6">{{ section.settings.title }}</h2>
+      {%- if section.settings.subtitle != blank -%}
+        <p class="text-xs tracking-widest opacity-30 uppercase">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div class="fit-selector__grid max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-{{ section.settings.columns }} gap-6">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'fit' -%}
+        <div
+          class="fit-card{% if forloop.first %} is-active{% endif %} relative group cursor-pointer overflow-hidden border border-white/10 bg-white/5 transition-all duration-500 hover:translate-y-[-10px] hover:border-gold"
+          data-fit-index="{{ forloop.index0 }}"
+          data-animate
+          {{ block.shopify_attributes }}
+        >
+          <div class="fit-card__image-wrap aspect-[3/4] overflow-hidden bg-black">
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 600
+                | image_tag:
+                  loading: 'lazy',
+                  class: 'w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110',
+                  alt: block.settings.name
+              }}
+            {%- else -%}
+              <div class="w-full h-full flex items-center justify-center opacity-20">
+                {{ 'product-1' | placeholder_svg_tag: 'w-1/2 h-1/2' }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="fit-card__info p-5 border-t border-white/10">
+            <h3 class="text-sm font-bold tracking-widest uppercase mb-4">{{ block.settings.name }} <span class="opacity-30 font-light ml-1">FIT</span></h3>
+            <div class="fit-card__specs flex border border-white/10 mb-5">
+              <div class="flex-1 p-2 border-r border-white/10">
+                <span class="block text-[8px] tracking-widest opacity-40 uppercase mb-1">PIERNA</span>
+                <span class="block text-[9px] font-bold tracking-widest uppercase">{{ block.settings.leg }}</span>
+              </div>
+              <div class="flex-1 p-2 border-r border-white/10">
+                <span class="block text-[8px] tracking-widest opacity-40 uppercase mb-1">CINTURA</span>
+                <span class="block text-[9px] font-bold tracking-widest uppercase">{{ block.settings.waist }}</span>
+              </div>
+              <div class="flex-1 p-2">
+                <span class="block text-[8px] tracking-widest opacity-40 uppercase mb-1">LARGO</span>
+                <span class="block text-[9px] font-bold tracking-widest uppercase">{{ block.settings.length }}</span>
+              </div>
+            </div>
+
+            {%- if block.settings.collection != blank -%}
+              <a
+                href="{{ block.settings.collection.url }}"
+                class="inline-flex items-center gap-2 text-[9px] font-bold tracking-[0.2em] uppercase text-gold border-b border-gold pb-1 hover:opacity-60 transition-opacity"
+              >
+                Ver {{ block.settings.name }} Fit
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                  <path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            {%- endif -%}
+          </div>
+          
+          <div class="absolute top-4 right-4 w-6 h-6 rounded-full bg-gold text-black flex items-center justify-center text-[10px] font-bold opacity-0 transition-opacity duration-300 active-badge">
+            ✓
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  {%- if section.settings.season_label != blank -%}
+    <div class="max-w-7xl mx-auto mt-12 text-right">
+      <p class="text-[10px] tracking-widest opacity-30 italic uppercase">{{ section.settings.season_label }}</p>
+    </div>
+  {%- endif -%}
+
+</div>
+
+<style>
+  .fit-card.is-active .active-badge {
+    opacity: 1;
+  }
+  .fit-card.is-active {
+    border-color: #d4af37 !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+  }
+</style>
+
+<script>
+  (function () {
+    var section = document.getElementById('fit-selector-{{ section.id }}');
+    if (!section) return;
+
+    var cards = section.querySelectorAll('.fit-card');
+
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        cards.forEach(function (c) { c.classList.remove('is-active'); });
+        card.classList.add('is-active');
+
+        var fitName = card.querySelector('h3');
+        if (fitName) {
+          document.dispatchEvent(new CustomEvent('fit:selected', {
+            detail: {
+              fitIndex: card.dataset.fitIndex,
+              fitName: fitName.textContent.trim()
+            }
+          }));
+        }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Fit Selector",
+  "tag": "section",
+  "class": "section-fit-selector",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Spring Summer 2026"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "The Fits"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Straight / Slim / Flare / Baggy / Loose / Balloon / Wide Leg"
+    },
+    {
+      "type": "text",
+      "id": "season_label",
+      "label": "Season label",
+      "default": "Spring Summer 2026"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "fit",
+      "name": "Fit",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Fit image"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Fit name",
+          "default": "Slim"
+        },
+        {
+          "type": "text",
+          "id": "leg",
+          "label": "Pierna",
+          "default": "Tapered"
+        },
+        {
+          "type": "text",
+          "id": "waist",
+          "label": "Cintura",
+          "default": "Mid"
+        },
+        {
+          "type": "text",
+          "id": "length",
+          "label": "Largo",
+          "default": "Full"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Link to collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fit Selector",
+      "blocks": [
+        {
+          "type": "fit",
+          "settings": {
+            "name": "Slim",
+            "leg": "Tapered",
+            "waist": "Mid",
+            "length": "Full"
+          }
+        },
+        {
+          "type": "fit",
+          "settings": {
+            "name": "Straight",
+            "leg": "Straight",
+            "waist": "Mid",
+            "length": "Full"
+          }
+        },
+        {
+          "type": "fit",
+          "settings": {
+            "name": "Baggy",
+            "leg": "Extra Baggy",
+            "waist": "Mid",
+            "length": "Full"
+          }
+        },
+        {
+          "type": "fit",
+          "settings": {
+            "name": "Loose",
+            "leg": "Relaxed",
+            "waist": "Mid",
+            "length": "Full"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

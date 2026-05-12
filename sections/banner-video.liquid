@@ -1,0 +1,715 @@
+{%- if section.settings.link -%}
+  <a 
+    class="relative w-full overflow-hidden block"
+    href="{{ section.settings.link }}"
+    {% if section.settings.is_blank %}
+      rel="noopener noreferrer"
+      target="_blank"
+    {% endif %}
+  >
+  {%- else -%}
+  <div class="relative w-full overflow-hidden">
+{%- endif -%}
+
+  {% if section.blocks.size > 0 %}
+    <div
+      class="absolute inset-0 z-20 md:container"
+    >
+      <div 
+        class="custom-space max-w-full w-max absolute z-10 {{ section.settings.mobile_vertical_alignment }} {{ section.settings.mobile_horizontal_alignment }} {{ section.settings.mobile_text_alignment }} {{ section.settings.desktop_vertical_alignment }} {{ section.settings.desktop_horizontal_alignment }} {{ section.settings.desktop_text_alignment }}"
+        style="--pt-desktop:{{ section.settings.desktop_offset_top }}px;--pb-desktop:{{ section.settings.desktop_offset_bottom }}px;--pl-desktop:{{ section.settings.desktop_offset_left }}px;--pr-desktop:{{ section.settings.desktop_offset_right }}px;--pt-mobile:{{ section.settings.mobile_offset_top }}px;--pb-mobile:{{ section.settings.mobile_offset_bottom }}px;--pl-mobile:{{ section.settings.mobile_offset_left }}px;--pr-mobile:{{ section.settings.mobile_offset_right }}px"
+      >
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'custom_text_title' %}
+              {% liquid
+                assign contentClasses = 'text-monastery-black'
+                if block.settings.color == 'WHITE'
+                  assign contentClasses = 'text-monastery-white'
+                endif
+              %}
+              <h2 
+                class="custom-format {{ contentClasses }}"
+                style="
+                  --fs-desktop: {{- block.settings.desktop_font_size -}}px;
+                  --fs-mobile: {{- block.settings.mobile_font_size -}}px;
+                  
+                  --fw-desktop: {{- block.settings.desktop_font_weight -}};
+                  --fw-mobile: {{- block.settings.mobile_font_weight -}};
+
+                  --ls-desktop: {{- block.settings.desktop_letter_spacing -}}px;
+                  --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
+                "
+              >
+                {{ block.settings.title }}
+              </h2>
+            {% when 'custom_text' %}
+              {% liquid
+                assign contentClasses = 'text-monastery-black'
+                if block.settings.color == 'WHITE'
+                  assign contentClasses = 'text-monastery-white'
+                endif
+              %}
+              <div 
+                class="custom-format mt-1 {{ contentClasses }}"
+                style="
+                  --fs-desktop: {{- block.settings.desktop_font_size -}}px;
+                  --fs-mobile: {{- block.settings.mobile_font_size -}}px;
+                  
+                  --fw-desktop: {{- block.settings.desktop_font_weight -}};
+                  --fw-mobile: {{- block.settings.mobile_font_weight -}};
+
+                  --ls-desktop: {{- block.settings.desktop_letter_spacing -}}px;
+                  --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
+                "
+              >
+                {{ block.settings.content }}
+              </div>
+            {% when 'button_link' %}
+              {% liquid
+                assign buttonColor = ''
+                assign buttonBorder = ''
+
+                case block.settings.color
+                  when "WHITE"
+                    assign buttonColor = 'white'
+                  else
+                    assign buttonColor = 'black'
+                endcase
+
+                case block.settings.border
+                  when "WHITE"
+                    assign buttonBorder = 'btn-border btn-border__white'
+                  when "BLACK"
+                    assign buttonBorder = 'btn-border btn-border__black'
+                  else
+                    assign buttonBorder = ''
+                endcase
+              %}
+              {% if section.settings.link %}
+                <div
+                  class="btn mt-3 custom-format {{ buttonColor }} {{ buttonBorder }}"
+                  style="
+                    --fs-desktop: {{- block.settings.desktop_font_size -}}px;
+                    --fs-mobile: {{- block.settings.mobile_font_size -}}px;
+                    
+                    --fw-desktop: {{- block.settings.desktop_font_weight -}};
+                    --fw-mobile: {{- block.settings.mobile_font_weight -}};
+
+                    --ls-desktop: {{- block.settings.desktop_letter_spacing -}}px;
+                    --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
+
+                    --btn-opacity: {{- block.settings.opacity -}};
+                    --border-size: {{- block.settings.border_size -}}px;
+                  "
+                >
+                  <span>{{ block.settings.label }}</span>
+                </div>
+              {% endif %}
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.settings.video %}
+    <div class="relative block overflow-hidden overlay after:content-[''] after:absolute after:inset-0 after:bg-black lg:h-[35.25rem]" style="--overlay-opacity: {{ section.settings.custom_overlay }}">
+      <video 
+          class="block w-full h-full object-cover aspect-[2/1]"
+          src="{{ section.settings.video }}"
+          {% if section.settings.image != blank %}
+            poster="{{ section.settings.image| image_url }}" 
+          {% endif %}
+          autoplay
+          muted
+          loop 
+          playsinline>
+          Your browser does not support the video tag.
+        </video>
+    </div>
+  {% endif %}
+
+{%- if section.settings.link -%}
+  </a>
+  {%- else -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Banner video",
+  "tag": "section",
+  "class": "container",
+  "settings": [
+    {
+      "type": "header",
+      "content": "== Videos"
+    },
+    {
+      "type": "url",
+      "id": "video",
+      "label": "Video url"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Poster image"
+    },
+    {
+      "type": "header",
+      "content": "== Contenido"
+    },
+    {
+      "id": "link",
+      "type": "url",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "is_blank",
+      "label": "Abrir en una nueva pestaña",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "== Configuracion"
+    },
+    {
+      "type": "range",
+      "id": "custom_overlay",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "label": "Overlay",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "== Escritorio"
+    },
+    {
+      "type": "select",
+      "id": "desktop_vertical_alignment",
+      "label": "Alineación del contenido (Vertical)",
+      "options": [
+        {
+          "value": "lg:top-0 lg:-translate-y-0 lg:bottom-[initial]",
+          "label": "Superior"
+        },
+        {
+          "value": "lg:top-1/2 lg:-translate-y-1/2 lg:bottom-[initial]",
+          "label": "Centro"
+        },
+        {
+          "value": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
+          "label": "Inferior"
+        }
+      ],
+      "default": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]"
+    },
+    {
+      "type": "select",
+      "id": "desktop_horizontal_alignment",
+      "label": "Alineación del contenido (Horizontal)",
+      "options": [
+        {
+          "value": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
+          "label": "Izquierda"
+        },
+        {
+          "value": "lg:left-1/2 lg:-translate-x-1/2 lg:right-[initial]",
+          "label": "Centro"
+        },
+        {
+          "value": "lg:right-0 lg:-translate-x-0 lg:left-[initial]",
+          "label": "Derecha"
+        }
+      ],
+      "default": "lg:left-0 lg:-translate-x-0 lg:right-[initial]"
+    },
+    {
+      "type": "select",
+      "id": "desktop_text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        {
+          "value": "lg:text-left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "lg:text-center",
+          "label": "Centro"
+        },
+        {
+          "value": "lg:text-right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "lg:text-left"
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_top",
+      "label": "Espaciado superior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_bottom",
+      "label": "Espaciado inferior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_left",
+      "label": "Espaciado izquierdo",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_right",
+      "label": "Espaciado derecho",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "== Mobile"
+    },
+    {
+      "type": "select",
+      "id": "mobile_vertical_alignment",
+      "label": "Alineación del contenido (Vertical)",
+      "options": [
+        {
+          "value": "top-0 -translate-y-0",
+          "label": "Superior"
+        },
+        {
+          "value": "top-1/2 -translate-y-1/2",
+          "label": "Centro"
+        },
+        {
+          "value": "bottom-0 -translate-y-0",
+          "label": "Inferior"
+        }
+      ],
+      "default": "bottom-0 -translate-y-0"
+    },
+    {
+      "type": "select",
+      "id": "mobile_horizontal_alignment",
+      "label": "Alineación del contenido (Horizontal)",
+      "options": [
+        {
+          "value": "left-0 -translate-x-0",
+          "label": "Izquierda"
+        },
+        {
+          "value": "left-1/2 -translate-x-1/2",
+          "label": "Centro"
+        },
+        {
+          "value": "right-0 -translate-x-0",
+          "label": "Derecha"
+        }
+      ],
+      "default": "left-0 -translate-x-0"
+    },
+    {
+      "type": "select",
+      "id": "mobile_text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "text-center",
+          "label": "Centro"
+        },
+        {
+          "value": "text-right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "text-left"
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_top",
+      "label": "Espaciado superior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_bottom",
+      "label": "Espaciado inferior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_left",
+      "label": "Espaciado izquierdo",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_right",
+      "label": "Espaciado derecho",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Título",
+      "type": "custom_text_title",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Título",
+          "default": "TITULO"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "color",
+          "type": "radio",
+          "label": "Color del título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "== Configuración escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuración teléfono"
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "Sub titulo",
+      "type": "custom_text",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "content",
+          "type": "richtext",
+          "label": "Contenido",
+          "default": "<p>Lorem ipsum dolor sit amet</p>"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "color",
+          "type": "radio",
+          "label": "Color del contenido",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "== Configuración escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuración teléfono"
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "Botón",
+      "type": "button_link",
+      "limit": 1,
+      "settings": [
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Botón",
+          "default": "BOTON"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "color",
+          "type": "radio",
+          "label": "Color del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "== Transparencia"
+        },
+        {
+          "type": "range",
+          "id": "opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Opacidad",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "== Borde"
+        },
+        {
+          "id": "border",
+          "type": "radio",
+          "label": "Borde del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            },
+            {
+              "value": "NONE",
+              "label": "Ninguno"
+            }
+          ],
+          "default": "NONE"
+        },
+        {
+          "type": "range",
+          "id": "border_size",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "unit": "px",
+          "label": "Grosor del borde",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "== Configuración escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuración teléfono"
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner video"
+    }
+  ]
+}
+{% endschema %}

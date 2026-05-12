@@ -1,0 +1,2069 @@
+{% liquid
+    assign containerColSize = 'md:grid-cols-2'
+    assign elementsClasses = 'md:col-span-1, md:col-span-1' | split: ','
+
+    case section.settings.layout
+        when '1/3_2/3'
+            assign containerColSize = 'md:grid-cols-3'
+            assign elementsClasses = 'md:col-span-1, md:col-span-2' | split: ','
+        when '2/3_1/3'
+            assign containerColSize = 'md:grid-cols-3'
+            assign elementsClasses = 'md:col-span-2, md:col-span-1' | split: ','
+    endcase 
+  %}
+
+<div 
+  class="custom-space relative w-full grid grid-cols-2 gap-3 {{ containerColSize }}"
+  style="--pt-desktop:{{ section.settings.desktop_offset_top }}px;--pb-desktop:{{ section.settings.desktop_offset_bottom }}px;--pt-mobile:{{ section.settings.mobile_offset_top }}px;--pb-mobile:{{ section.settings.mobile_offset_bottom }}px"
+>
+  {% for gridItem in section.blocks %}
+    {% liquid
+      assign position = forloop.index | minus: 1
+
+      # ** Title Styles **
+      assign titleColor = 'text-monastery-black'
+
+      if gridItem.settings.title_color == 'WHITE'
+        assign titleColor = 'text-monastery-white'
+      endif
+
+      # ** Content Styles **
+      assign contentColor = 'text-monastery-black'
+
+      if gridItem.settings.content_color == 'WHITE'
+        assign contentColor = 'text-monastery-white'
+      endif
+
+      # ** Button Styles **
+      assign buttonColor = 'black'
+      assign buttonBorder = ''
+
+      case gridItem.settings.button_color
+        when "WHITE"
+          assign buttonColor = 'white'
+        else
+          assign buttonColor = 'black'
+      endcase
+      
+      case gridItem.settings.button_border
+        when "WHITE"
+          assign buttonBorder = 'btn-border btn-border__white'
+        when "BLACK"
+          assign buttonBorder = 'btn-border btn-border__black'
+        else
+          assign buttonBorder = ''
+      endcase
+    %}
+
+    {% case gridItem.type %}
+      {% when 'grid_image' %}
+        {%- if gridItem.settings.link -%}
+              <a 
+                  class="relative block overflow-hidden col-span-2 {{ elementsClasses[position] }}" 
+                  href="{{ gridItem.settings.link }}"
+                  {% if gridItem.settings.is_blank %}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                  {% endif %}
+              >
+            {%- else -%}
+              <div class="relative block overflow-hidden col-span-2 {{ elementsClasses[position] }}">
+        {%- endif -%}
+          
+          <div class="overlay h-full after:content-[''] after:absolute after:pointer-events-none after:inset-0 after:bg-black" style="--overlay-opacity: {{ gridItem.settings.overlay }}">
+            {% if gridItem.settings.image %}
+                <figure class="skeleton h-full">
+                    {{
+                      gridItem.settings.image.src
+                      | image_url: width: 1800
+                      | image_tag:
+                        loading: 'lazy',
+                        alt: gridItem.settings.image.alt,
+                        class: 'block w-full h-full object-cover aspect-[.8] transition duration-1000 ease-in-out transform hover:scale-105'
+                    }}
+                </figure>
+              {% else %}
+                {{ 'image' | placeholder_svg_tag: 'block w-full h-full object-cover aspect-[.8] transition duration-1000 ease-in-out transform hover:scale-105' }}
+            {% endif %}
+          </div>
+
+          <div
+            data-animate class="custom-space max-w-full w-max absolute z-10 {{ gridItem.settings.mobile_vertical_alignment }} {{ gridItem.settings.mobile_horizontal_alignment }} {{ gridItem.settings.mobile_text_alignment }} {{ gridItem.settings.desktop_vertical_alignment }} {{ gridItem.settings.desktop_horizontal_alignment }} {{ gridItem.settings.desktop_text_alignment }}"
+            style="--pt-desktop:{{ gridItem.settings.desktop_offset_top }}px;--pb-desktop:{{ gridItem.settings.desktop_offset_bottom }}px;--pl-desktop:{{ gridItem.settings.desktop_offset_left }}px;--pr-desktop:{{ gridItem.settings.desktop_offset_right }}px;--pt-mobile:{{ gridItem.settings.mobile_offset_top }}px;--pb-mobile:{{ gridItem.settings.mobile_offset_bottom }}px;--pl-mobile:{{ gridItem.settings.mobile_offset_left }}px;--pr-mobile:{{ gridItem.settings.mobile_offset_right }}px"
+          >
+            {% if gridItem.settings.title != blank %}
+                <h2 class="custom-format {{ titleColor }} tracking-cinematic uppercase"
+                  style="
+                    --fs-desktop: {{- gridItem.settings.desktop_title_font_size -}}px;
+                    --fs-mobile: {{- gridItem.settings.mobile_title_font_size -}}px;
+                    
+                    --fw-desktop: {{- gridItem.settings.desktop_title_font_weight -}};
+                    --fw-mobile: {{- gridItem.settings.mobile_title_font_weight -}};
+
+                    --ls-desktop: {{- gridItem.settings.desktop_title_letter_spacing -}}px;
+                    --ls-mobile: {{- gridItem.settings.mobile_title_letter_spacing -}}px;
+                  "
+                >
+                  {{ gridItem.settings.title }}
+                </h2>
+            {% endif %}
+
+            {% if gridItem.settings.content != blank %}
+              <div 
+                class="custom-format mt-1 {{ contentColor }}"
+                style="
+                  --fs-desktop: {{- gridItem.settings.desktop_content_font_size -}}px;
+                  --fs-mobile: {{- gridItem.settings.mobile_content_font_size -}}px;
+                  
+                  --fw-desktop: {{- gridItem.settings.desktop_content_font_weight -}};
+                  --fw-mobile: {{- gridItem.settings.mobile_content_font_weight -}};
+
+                  --ls-desktop: {{- gridItem.settings.desktop_content_letter_spacing -}}px;
+                  --ls-mobile: {{- gridItem.settings.mobile_content_letter_spacing -}}px;
+                "
+              >
+                  {{ gridItem.settings.content }}
+              </div>
+            {% endif %}
+
+            {% if gridItem.settings.label != blank %}
+                <div 
+                  class="custom-format btn mt-5 {{ buttonColor }} {{ buttonBorder }}"
+                  style="
+                    --fs-desktop: {{- gridItem.settings.desktop_button_font_size -}}px;
+                    --fs-mobile: {{- gridItem.settings.mobile_button_font_size -}}px;
+                    
+                    --fw-desktop: {{- gridItem.settings.desktop_button_font_weight -}};
+                    --fw-mobile: {{- gridItem.settings.mobile_button_font_weight -}};
+
+                    --ls-desktop: {{- gridItem.settings.desktop_button_letter_spacing -}}px;
+                    --ls-mobile: {{- gridItem.settings.mobile_button_letter_spacing -}}px;
+
+                    --btn-opacity: {{- gridItem.settings.button_opacity -}};
+                    --border-size: {{- gridItem.settings.border_size -}}px;
+                  "
+                >
+                  <span>{{ gridItem.settings.label }}</span>
+                </div>
+            {% endif %}
+          </div>
+
+        {%- if gridItem.settings.link -%}
+              </a>
+          {%- else -%}
+            </div>
+        {%- endif -%}
+
+      {% when 'grid_video' %}
+        {%- if gridItem.settings.link -%}
+            <a 
+                class="relative block overflow-hidden col-span-2 {{ elementsClasses[position] }}" 
+                href="{{ gridItem.settings.link }}"
+                {% if gridItem.settings.is_blank %}
+                    target="_blank"
+                {% endif %}
+            >
+        {%- else -%}
+            <div class="relative block overflow-hidden col-span-2 h-full {{ elementsClasses[position] }}">
+        {%- endif -%}
+
+            <div class="h-full overlay after:content-[''] after:absolute after:inset-0 after:bg-black" style="--overlay-opacity: {{ gridItem.settings.overlay }}">
+                <video
+                    class="block w-full h-full object-cover aspect-[.8] {{ gridItem.settings.image_alignment }}"
+                    {% if gridItem.settings.poster_image != blank %}
+                      poster="{{ gridItem.settings.poster_image | image_url }}" 
+                    {% endif %}
+                    src="{{ gridItem.settings.video }}"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                >
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+
+            <div
+              data-animate class="custom-space max-w-full w-max absolute z-10 {{ gridItem.settings.mobile_vertical_alignment }} {{ gridItem.settings.mobile_horizontal_alignment }} {{ gridItem.settings.mobile_text_alignment }} {{ gridItem.settings.desktop_vertical_alignment }} {{ gridItem.settings.desktop_horizontal_alignment }} {{ gridItem.settings.desktop_text_alignment }}"
+              style="--pt-desktop:{{ gridItem.settings.desktop_offset_top }}px;--pb-desktop:{{ gridItem.settings.desktop_offset_bottom }}px;--pl-desktop:{{ gridItem.settings.desktop_offset_left }}px;--pr-desktop:{{ gridItem.settings.desktop_offset_right }}px;--pt-mobile:{{ gridItem.settings.mobile_offset_top }}px;--pb-mobile:{{ gridItem.settings.mobile_offset_bottom }}px;--pl-mobile:{{ gridItem.settings.mobile_offset_left }}px;--pr-mobile:{{ gridItem.settings.mobile_offset_right }}px"
+            >
+              {% if gridItem.settings.title != blank %}
+                  <h2 class="custom-format {{ titleColor }} tracking-cinematic uppercase"
+                    style="
+                      --fs-desktop: {{- gridItem.settings.desktop_title_font_size -}}px;
+                      --fs-mobile: {{- gridItem.settings.mobile_title_font_size -}}px;
+                      
+                      --fw-desktop: {{- gridItem.settings.desktop_title_font_weight -}};
+                      --fw-mobile: {{- gridItem.settings.mobile_title_font_weight -}};
+
+                      --ls-desktop: {{- gridItem.settings.desktop_title_letter_spacing -}}px;
+                      --ls-mobile: {{- gridItem.settings.mobile_title_letter_spacing -}}px;
+                    "
+                  >
+                    {{ gridItem.settings.title }}
+                  </h2>
+              {% endif %}
+              {% if gridItem.settings.content != blank %}
+                <div 
+                  class="custom-format mt-1 {{ contentColor }}"
+                  style="
+                    --fs-desktop: {{- gridItem.settings.desktop_content_font_size -}}px;
+                    --fs-mobile: {{- gridItem.settings.mobile_content_font_size -}}px;
+                    
+                    --fw-desktop: {{- gridItem.settings.desktop_content_font_weight -}};
+                    --fw-mobile: {{- gridItem.settings.mobile_content_font_weight -}};
+
+                    --ls-desktop: {{- gridItem.settings.desktop_content_letter_spacing -}}px;
+                    --ls-mobile: {{- gridItem.settings.mobile_content_letter_spacing -}}px;
+                  "
+                >
+                    {{ gridItem.settings.content }}
+                </div>
+              {% endif %}
+              {% if gridItem.settings.label != blank %}
+                  <div 
+                    class="custom-format btn mt-5 {{ buttonColor }} {{ buttonBorder }}"
+                    style="
+                      --fs-desktop: {{- gridItem.settings.desktop_button_font_size -}}px;
+                      --fs-mobile: {{- gridItem.settings.mobile_button_font_size -}}px;
+                      
+                      --fw-desktop: {{- gridItem.settings.desktop_button_font_weight -}};
+                      --fw-mobile: {{- gridItem.settings.mobile_button_font_weight -}};
+
+                      --ls-desktop: {{- gridItem.settings.desktop_button_letter_spacing -}}px;
+                      --ls-mobile: {{- gridItem.settings.mobile_button_letter_spacing -}}px;
+
+                      --btn-opacity: {{- gridItem.settings.button_opacity -}};
+                      --border-size: {{- gridItem.settings.border_size -}}px;
+                    "
+                  >
+                    <span>{{ gridItem.settings.label }}</span>
+                  </div>
+              {% endif %}
+            </div>
+
+        {%- if gridItem.settings.link -%}
+            </a>
+        {%- else -%}
+            </div>
+        {%- endif -%}
+    
+      {% when 'grid_color' %}
+        {%- if gridItem.settings.link -%}
+            <a 
+              class="relative block overflow-hidden col-span-2 aspect-[.8] h-full {{ elementsClasses[position] }}" 
+              href="{{ gridItem.settings.link }}"
+              style="background-color: {{ gridItem.settings.bg_color }}"
+              {% if gridItem.settings.is_blank %}
+                  target="_blank"
+                  rel="noopener noreferrer"
+              {% endif %}
+            >
+          {%- else -%}
+            <div 
+              class="relative block overflow-hidden col-span-2 aspect-[.8] h-full {{ elementsClasses[position] }}"
+              style="background-color: {{ gridItem.settings.bg_color }}"
+            >
+        {%- endif -%}  
+            <div
+              data-animate class="custom-space max-w-full w-max absolute z-10 {{ gridItem.settings.mobile_vertical_alignment }} {{ gridItem.settings.mobile_horizontal_alignment }} {{ gridItem.settings.mobile_text_alignment }} {{ gridItem.settings.desktop_vertical_alignment }} {{ gridItem.settings.desktop_horizontal_alignment }} {{ gridItem.settings.desktop_text_alignment }}"
+              style="--pt-desktop:{{ gridItem.settings.desktop_offset_top }}px;--pb-desktop:{{ gridItem.settings.desktop_offset_bottom }}px;--pl-desktop:{{ gridItem.settings.desktop_offset_left }}px;--pr-desktop:{{ gridItem.settings.desktop_offset_right }}px;--pt-mobile:{{ gridItem.settings.mobile_offset_top }}px;--pb-mobile:{{ gridItem.settings.mobile_offset_bottom }}px;--pl-mobile:{{ gridItem.settings.mobile_offset_left }}px;--pr-mobile:{{ gridItem.settings.mobile_offset_right }}px"
+            >
+              {% if gridItem.settings.title != blank %}
+                  <h2 class="custom-format {{ titleColor }} tracking-cinematic uppercase"
+                    style="
+                      --fs-desktop: {{- gridItem.settings.desktop_title_font_size -}}px;
+                      --fs-mobile: {{- gridItem.settings.mobile_title_font_size -}}px;
+                      
+                      --fw-desktop: {{- gridItem.settings.desktop_title_font_weight -}};
+                      --fw-mobile: {{- gridItem.settings.mobile_title_font_weight -}};
+
+                      --ls-desktop: {{- gridItem.settings.desktop_title_letter_spacing -}}px;
+                      --ls-mobile: {{- gridItem.settings.mobile_title_letter_spacing -}}px;
+                    "
+                  >
+                    {{ gridItem.settings.title }}
+                  </h2>
+              {% endif %}
+
+              {% if gridItem.settings.content != blank %}
+                <div 
+                  class="custom-format mt-1 {{ contentColor }}"
+                  style="
+                    --fs-desktop: {{- gridItem.settings.desktop_content_font_size -}}px;
+                    --fs-mobile: {{- gridItem.settings.mobile_content_font_size -}}px;
+                    
+                    --fw-desktop: {{- gridItem.settings.desktop_content_font_weight -}};
+                    --fw-mobile: {{- gridItem.settings.mobile_content_font_weight -}};
+
+                    --ls-desktop: {{- gridItem.settings.desktop_content_letter_spacing -}}px;
+                    --ls-mobile: {{- gridItem.settings.mobile_content_letter_spacing -}}px;
+                  "
+                >
+                    {{ gridItem.settings.content }}
+                </div>
+              {% endif %}
+
+              {% if gridItem.settings.label != blank %}
+                  <div 
+                    class="custom-format btn mt-5 {{ buttonColor }} {{ buttonBorder }}"
+                    style="
+                      --fs-desktop: {{- gridItem.settings.desktop_button_font_size -}}px;
+                      --fs-mobile: {{- gridItem.settings.mobile_button_font_size -}}px;
+                      
+                      --fw-desktop: {{- gridItem.settings.desktop_button_font_weight -}};
+                      --fw-mobile: {{- gridItem.settings.mobile_button_font_weight -}};
+
+                      --ls-desktop: {{- gridItem.settings.desktop_button_letter_spacing -}}px;
+                      --ls-mobile: {{- gridItem.settings.mobile_button_letter_spacing -}}px;
+
+                      --btn-opacity: {{- gridItem.settings.button_opacity -}};
+                      --border-size: {{- gridItem.settings.border_size -}}px;
+                    "
+                  >
+                    <span>{{ gridItem.settings.label }}</span>
+                  </div>
+              {% endif %}
+            </div>
+          {%- if gridItem.settings.link -%}
+            </a>
+            {%- else -%}
+              </div>
+          {%- endif -%}
+    {% endcase %}
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Grid (2 columns)",
+  "tag": "section",
+  "class": "container",
+  "max_blocks": 2,
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout type",
+      "options": [
+        {
+          "value": "1/2_1/2",
+          "label": "1/2 1/2"
+        },
+        {
+          "value": "1/3_2/3",
+          "label": "1/3 2/3"
+        },
+        {
+          "value": "2/3_1/3",
+          "label": "2/3 1/3"
+        }
+      ],
+      "default": "1/2_1/2"
+    },
+    {
+      "type": "header",
+      "content": "== Escritorio"
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_top",
+      "label": "Espaciado superior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "desktop_offset_bottom",
+      "label": "Espaciado inferior",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "== Mobile"
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_top",
+      "label": "Espaciado superior",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "mobile_offset_bottom",
+      "label": "Espaciado inferior",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Imagen",
+      "type": "grid_image",
+      "settings": [
+        {
+          "type": "header",
+          "content": "== Imagen de fondo"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen"
+        },
+        {
+          "type": "select",
+          "id": "image_alignment",
+          "label": "Alineación de la imagen",
+          "options": [
+            {
+              "value": "object-top",
+              "label": "Superior"
+            },
+            {
+              "value": "object-center",
+              "label": "Centro"
+            },
+            {
+              "value": "object-bottom",
+              "label": "Inferior"
+            }
+          ],
+          "default": "object-center"
+        },
+        {
+          "type": "header",
+          "content": "== Título"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "TITULO"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "title_color",
+          "type": "radio",
+          "label": "Color del título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Sub título"
+        },
+        {
+          "id": "content",
+          "type": "richtext",
+          "label": "Texto",
+          "default": "<p>SUB TITULO</p>"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "content_color",
+          "type": "radio",
+          "label": "Color del sub título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Botón"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Open in a new tab",
+          "default": false
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Label",
+          "default": "BOTON"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "button_color",
+          "type": "radio",
+          "label": "Color del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "== Transparencia"
+        },
+        {
+          "type": "range",
+          "id": "button_opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Opacidad",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "== Borde"
+        },
+        {
+          "id": "button_border",
+          "type": "radio",
+          "label": "Borde del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            },
+            {
+              "value": "NONE",
+              "label": "Ninguno"
+            }
+          ],
+          "default": "NONE"
+        },
+        {
+          "type": "range",
+          "id": "border_size",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "unit": "px",
+          "label": "Grosor del borde",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuracion"
+        },
+        {
+          "id": "overlay",
+          "type": "range",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Overlay opacity",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Escritorio"
+        },
+        {
+          "type": "select",
+          "id": "desktop_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "lg:top-0 lg:-translate-y-0 lg:bottom-[initial]",
+              "label": "Superior"
+            },
+            {
+              "value": "lg:top-1/2 lg:-translate-y-1/2 lg:bottom-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
+              "label": "Inferior"
+            }
+          ],
+          "default": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:left-1/2 lg:-translate-x-1/2 lg:right-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:right-0 lg:-translate-x-0 lg:left-[initial]",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:left-0 lg:-translate-x-0 lg:right-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "lg:text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:text-left"
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Mobile"
+        },
+        {
+          "type": "select",
+          "id": "mobile_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "top-0 -translate-y-0",
+              "label": "Superior"
+            },
+            {
+              "value": "top-1/2 -translate-y-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "bottom-0 -translate-y-0",
+              "label": "Inferior"
+            }
+          ],
+          "default": "bottom-0 -translate-y-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "left-0 -translate-x-0",
+              "label": "Izquierda"
+            },
+            {
+              "value": "left-1/2 -translate-x-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "right-0 -translate-x-0",
+              "label": "Derecha"
+            }
+          ],
+          "default": "left-0 -translate-x-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "text-left"
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "Video",
+      "type": "grid_video",
+      "settings": [
+        {
+          "type": "header",
+          "content": "== Video"
+        },
+        {
+          "type": "url",
+          "id": "video",
+          "label": "Video URL"
+        },
+        {
+          "type": "image_picker",
+          "id": "poster_image",
+          "label": "Poster image"
+        },
+        {
+          "type": "header",
+          "content": "== Título"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "TITULO"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "title_color",
+          "type": "radio",
+          "label": "Color del título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Sub título"
+        },
+        {
+          "id": "content",
+          "type": "richtext",
+          "label": "Texto",
+          "default": "<p>SUB TITULO</p>"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "content_color",
+          "type": "radio",
+          "label": "Color del sub título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Botón"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Open in a new tab",
+          "default": false
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Label",
+          "default": "BOTON"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "button_color",
+          "type": "radio",
+          "label": "Color del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "== Transparencia"
+        },
+        {
+          "type": "range",
+          "id": "button_opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Opacidad",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "== Borde"
+        },
+        {
+          "id": "button_border",
+          "type": "radio",
+          "label": "Borde del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            },
+            {
+              "value": "NONE",
+              "label": "Ninguno"
+            }
+          ],
+          "default": "NONE"
+        },
+        {
+          "type": "range",
+          "id": "border_size",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "unit": "px",
+          "label": "Grosor del borde",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Configuracion"
+        },
+        {
+          "id": "overlay",
+          "type": "range",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Overlay opacity",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Escritorio"
+        },
+        {
+          "type": "select",
+          "id": "desktop_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "lg:top-0 lg:-translate-y-0 lg:bottom-[initial]",
+              "label": "Superior"
+            },
+            {
+              "value": "lg:top-1/2 lg:-translate-y-1/2 lg:bottom-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
+              "label": "Inferior"
+            }
+          ],
+          "default": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:left-1/2 lg:-translate-x-1/2 lg:right-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:right-0 lg:-translate-x-0 lg:left-[initial]",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:left-0 lg:-translate-x-0 lg:right-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "lg:text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:text-left"
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Mobile"
+        },
+        {
+          "type": "select",
+          "id": "mobile_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "top-0 -translate-y-0",
+              "label": "Superior"
+            },
+            {
+              "value": "top-1/2 -translate-y-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "bottom-0 -translate-y-0",
+              "label": "Inferior"
+            }
+          ],
+          "default": "bottom-0 -translate-y-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "left-0 -translate-x-0",
+              "label": "Izquierda"
+            },
+            {
+              "value": "left-1/2 -translate-x-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "right-0 -translate-x-0",
+              "label": "Derecha"
+            }
+          ],
+          "default": "left-0 -translate-x-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "text-left"
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "Color",
+      "type": "grid_color",
+      "settings": [
+        {
+          "type": "header",
+          "content": "== Color de fondo"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background",
+          "default": "#000000"
+        },
+        {
+          "type": "header",
+          "content": "== Título"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "TITULO"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "title_color",
+          "type": "radio",
+          "label": "Color del título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_title_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Sub título"
+        },
+        {
+          "id": "content",
+          "type": "richtext",
+          "label": "Texto",
+          "default": "<p>SUB TITULO</p>"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "content_color",
+          "type": "radio",
+          "label": "Color del sub título",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Sub título en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_content_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Botón"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Open in a new tab",
+          "default": false
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Label",
+          "default": "BOTON"
+        },
+        {
+          "type": "header",
+          "content": "== Color"
+        },
+        {
+          "id": "button_color",
+          "type": "radio",
+          "label": "Color del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            }
+          ],
+          "default": "BLACK"
+        },
+        {
+          "type": "header",
+          "content": "== Transparencia"
+        },
+        {
+          "type": "range",
+          "id": "button_opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Opacidad",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "== Borde"
+        },
+        {
+          "id": "button_border",
+          "type": "radio",
+          "label": "Borde del botón",
+          "options": [
+            {
+              "value": "BLACK",
+              "label": "Negro"
+            },
+            {
+              "value": "WHITE",
+              "label": "Blanco"
+            },
+            {
+              "value": "NONE",
+              "label": "Ninguno"
+            }
+          ],
+          "default": "NONE"
+        },
+        {
+          "type": "range",
+          "id": "border_size",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "unit": "px",
+          "label": "Grosor del borde",
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Escritorio"
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "desktop_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "= Botón en Mobile"
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_size",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_font_weight",
+          "min": 100,
+          "max": 900,
+          "step": 100,
+          "label": "Grosor",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_button_letter_spacing",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "px",
+          "label": "Espacio entre letras",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Escritorio"
+        },
+        {
+          "type": "select",
+          "id": "desktop_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "lg:top-0 lg:-translate-y-0 lg:bottom-[initial]",
+              "label": "Superior"
+            },
+            {
+              "value": "lg:top-1/2 lg:-translate-y-1/2 lg:bottom-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]",
+              "label": "Inferior"
+            }
+          ],
+          "default": "lg:bottom-0 lg:-translate-y-0 lg:top-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "lg:left-0 lg:-translate-x-0 lg:right-[initial]",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:left-1/2 lg:-translate-x-1/2 lg:right-[initial]",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:right-0 lg:-translate-x-0 lg:left-[initial]",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:left-0 lg:-translate-x-0 lg:right-[initial]"
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "lg:text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "lg:text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "lg:text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "lg:text-left"
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "desktop_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "== Mobile"
+        },
+        {
+          "type": "select",
+          "id": "mobile_vertical_alignment",
+          "label": "Alineación del contenido (Vertical)",
+          "options": [
+            {
+              "value": "top-0 -translate-y-0",
+              "label": "Superior"
+            },
+            {
+              "value": "top-1/2 -translate-y-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "bottom-0 -translate-y-0",
+              "label": "Inferior"
+            }
+          ],
+          "default": "bottom-0 -translate-y-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_horizontal_alignment",
+          "label": "Alineación del contenido (Horizontal)",
+          "options": [
+            {
+              "value": "left-0 -translate-x-0",
+              "label": "Izquierda"
+            },
+            {
+              "value": "left-1/2 -translate-x-1/2",
+              "label": "Centro"
+            },
+            {
+              "value": "right-0 -translate-x-0",
+              "label": "Derecha"
+            }
+          ],
+          "default": "left-0 -translate-x-0"
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_alignment",
+          "label": "Alineación del texto",
+          "options": [
+            {
+              "value": "text-left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "text-center",
+              "label": "Centro"
+            },
+            {
+              "value": "text-right",
+              "label": "Derecha"
+            }
+          ],
+          "default": "text-left"
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_top",
+          "label": "Espaciado superior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_bottom",
+          "label": "Espaciado inferior",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_left",
+          "label": "Espaciado izquierdo",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "mobile_offset_right",
+          "label": "Espaciado derecho",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Grid (2 columns)"
+    }
+  ]
+}
+{% endschema %}

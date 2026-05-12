@@ -1,0 +1,336 @@
+<div class="relative w-full flex flex-col md:flex-row">
+  {% for column in section.blocks %}
+    {% case column.type %}
+      {% when 'content_column' %}
+        <div class="relative block overflow-hidden md:w-1/2">
+          {% if column.settings.image %}
+            <figure
+              class="overlay h-full after:content-[''] after:absolute after:pointer-events-none after:inset-0 after:bg-black"
+              style="--overlay-opacity: {{ column.settings.overlay }}"
+            >
+              <img
+                class="block w-full h-full object-cover aspect-square transition duration-1000 ease-in-out transform hover:scale-105 {{ column.settings.image_alignment }}"
+                src="{{ column.settings.image.src | image_url: width: 950 }}"
+                srcset="
+                  {{ column.settings.image.src | image_url: width: 950 }} 950w,
+                  {{ column.settings.image.src | image_url: width: 1200 }} 1200w,
+                  {{ column.settings.image.src | image_url: width: 1400 }} 1400w,
+                  {{ column.settings.image.src | image_url: width: 2400 }} 2400w,
+                "
+                sizes="
+                  (max-width: 950px) 950px,
+                  (max-width: 1200px) 1200px,
+                  (max-width: 1400px) 1400px,
+                  2400px,
+                "
+                alt="{{ column.settings.image.alt }}"
+                loading="lazy"
+              >
+            </figure>
+          {% endif %}
+
+          <div class="absolute p-4 w-full max-w-fit {{ column.settings.vertical_alignment }} {{ column.settings.horizontal_alignment }} {{ column.settings.text_alignment }}">
+            {% if column.settings.title != blank %}
+              <h2 class="text-xl font-bold  md:text-2xl lg:text-4xl text-monastery-white">
+                {{ column.settings.title }}
+              </h2>
+            {% endif %}
+            {% if column.settings.content != blank %}
+              <p class="text-base text-monastery-white">
+                {{ column.settings.content }}
+              </p>
+            {% endif %}
+            {% if column.settings.label != blank %}
+              <div class="btn white mt-2 text-xs font-bold  md:text-sm xl:text-base">
+                <span>{{ column.settings.label }}</span>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% when 'product_column' %}
+        <div class="order-1 p-5 md:w-1/2 md:order-none lg:p-10">
+          <div class="flex justify-center items-center h-full">
+            <div class="w-full max-w-xs lg:max-w-md">
+              {%- if column.settings.product != blank -%}
+                {% render 'single-product', product: column.settings.product, layout: 'grid' %}
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      {% when 'color_column' %}
+        <div
+          class="relative block overflow-hidden aspect-square md:w-1/2 lg:min-h-screen"
+          style="background-color: {{ column.settings.bg_color }}"
+        >
+          <div class="absolute p-4 w-full max-w-fit {{ column.settings.vertical_alignment }} {{ column.settings.horizontal_alignment }} {{ column.settings.text_alignment }}">
+            {% if column.settings.title != blank %}
+              <h2 class="text-xl font-bold  md:text-2xl lg:text-4xl text-monastery-white">
+                {{ column.settings.title }}
+              </h2>
+            {% endif %}
+            {% if column.settings.content != blank %}
+              <p class="text-base text-monastery-white">
+                {{ column.settings.content }}
+              </p>
+            {% endif %}
+            {% if column.settings.label != blank %}
+              <div class="btn white mt-2 text-xs font-bold  md:text-sm xl:text-base">
+                <span>{{ column.settings.label }}</span>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+    {% endcase %}
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Single product",
+  "tag": "section",
+  "class": "container",
+  "max_blocks": 2,
+  "blocks": [
+    {
+      "name": "Product column",
+      "type": "product_column",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
+      ]
+    },
+    {
+      "name": "Content background column",
+      "type": "content_column",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "image_alignment",
+          "label": "Image alignment",
+          "options": [
+            {
+              "value": "object-top",
+              "label": "Top"
+            },
+            {
+              "value": "object-center",
+              "label": "Middle"
+            },
+            {
+              "value": "object-bottom",
+              "label": "Bottom"
+            }
+          ],
+          "default": "object-center"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "id": "content",
+          "type": "text",
+          "label": "Content"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Open in a new tab",
+          "default": false
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Label"
+        },
+        {
+          "type": "select",
+          "id": "vertical_alignment",
+          "label": "Content vertical alignment",
+          "options": [
+            {
+              "value": "top-0",
+              "label": "Top"
+            },
+            {
+              "value": "top-1/2 -translate-y-1/2",
+              "label": "Middle"
+            },
+            {
+              "value": "bottom-0",
+              "label": "Bottom"
+            }
+          ],
+          "default": "top-1/2 -translate-y-1/2"
+        },
+        {
+          "type": "select",
+          "id": "horizontal_alignment",
+          "label": "Content horizontal alignment",
+          "options": [
+            {
+              "value": "left-0",
+              "label": "Left"
+            },
+            {
+              "value": "left-1/2 -translate-x-1/2",
+              "label": "Middle"
+            },
+            {
+              "value": "right-0",
+              "label": "Right"
+            }
+          ],
+          "default": "left-0"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "text-left",
+              "label": "Left"
+            },
+            {
+              "value": "text-center",
+              "label": "Middle"
+            },
+            {
+              "value": "text-right",
+              "label": "Right"
+            }
+          ],
+          "default": "text-left"
+        },
+        {
+          "id": "overlay",
+          "type": "range",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "label": "Overlay opacity",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "Content background color",
+      "type": "color_column",
+      "settings": [
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background",
+          "default": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "id": "content",
+          "type": "text",
+          "label": "Content"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_blank",
+          "label": "Open in a new tab",
+          "default": false
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "label": "Label"
+        },
+        {
+          "type": "select",
+          "id": "vertical_alignment",
+          "label": "Content vertical alignment",
+          "options": [
+            {
+              "value": "top-0",
+              "label": "Top"
+            },
+            {
+              "value": "top-1/2 -translate-y-1/2",
+              "label": "Middle"
+            },
+            {
+              "value": "bottom-0",
+              "label": "Bottom"
+            }
+          ],
+          "default": "top-1/2 -translate-y-1/2"
+        },
+        {
+          "type": "select",
+          "id": "horizontal_alignment",
+          "label": "Content horizontal alignment",
+          "options": [
+            {
+              "value": "left-0",
+              "label": "Left"
+            },
+            {
+              "value": "left-1/2 -translate-x-1/2",
+              "label": "Middle"
+            },
+            {
+              "value": "right-0",
+              "label": "Right"
+            }
+          ],
+          "default": "left-0"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "text-left",
+              "label": "Left"
+            },
+            {
+              "value": "text-center",
+              "label": "Middle"
+            },
+            {
+              "value": "text-right",
+              "label": "Right"
+            }
+          ],
+          "default": "text-left"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Single product"
+    }
+  ]
+}
+{% endschema %}

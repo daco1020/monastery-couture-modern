@@ -1,0 +1,237 @@
+{%- unless template == 'index' or template == '404' or template == 'cart' -%}
+  {%- assign t = template | split: '.' | first -%}
+  <nav class="border-b border-white/5 py-4 bg-monastery-black/50 backdrop-blur-md sticky top-[75px] z-30" aria-label="breadcrumbs">
+    <ol class="container flex justify-center items-center flex-wrap gap-2">
+      <li class="flex items-center text-[10px] tracking-widest opacity-40 uppercase">
+        <a class="hover:opacity-100 transition-opacity" href="/">HOME</a>
+        <span class="mx-2">/</span>
+      </li>
+      {%- case t -%}
+        {%- when 'page' -%}
+          <li class="text-[10px] tracking-widest uppercase font-bold text-gold">
+            <span aria-current="page">{{ page.title }}</span>
+          </li>
+        {%- when 'product' -%}
+          {%- if collection.url -%}
+            <li class="flex items-center text-[10px] tracking-widest opacity-40 uppercase">
+              <a class="hover:opacity-100 transition-opacity" href="{{ collection.url }}">{{ collection.title }}</a>
+              <span class="mx-2">/</span>
+            </li>
+          {%- endif -%}
+          <li class="text-[10px] tracking-widest uppercase font-bold text-gold">
+            <span aria-current="page">{{ product.title }}</span>
+          </li>
+        {%- when 'collection' and collection.handle -%}
+          <li class="text-[10px] tracking-widest uppercase font-bold text-gold">
+            <span aria-current="page">{{ collection.title }}</span>
+          </li>
+        {%- else -%}
+          <li class="text-[10px] tracking-widest uppercase font-bold text-gold">
+            <span aria-current="page">{{ page_title }}</span>
+          </li>
+      {%- endcase -%}
+    </ol>
+  </nav>
+{%- endunless -%}
+
+<div data-component="footer" class="bg-monastery-black">
+  <div class="container py-5 text-white sm:py-10 lg:py-14">
+    {% if settings.footer_logo_image != blank %}
+      <div class="flex justify-center items-center mb-5 sm:mb-10 lg:mb-14">
+        <a href="{{ routes.root_url }}" aria-label="Go to home">
+          <figure class="max-w-[40px] mx-auto">
+            {{
+              settings.footer_logo_image.src
+              | image_url: width: 150
+              | image_tag: loading: 'eager', alt: settings.footer_logo_image.alt, class: 'block'
+            }}
+          </figure>
+        </a>
+      </div>
+    {% endif %}
+
+    <div class="flex flex-col sm:flex-wrap sm:flex-row">
+      {% for block in section.blocks %}
+        <div class="sm:basis-1/2 md:basis-1/4">
+          <div class="mb-5 last:mb-0">
+            <button type="button" class="group flex items-center w-full justify-between py-2 mb-3 sm:pointer-events-none" data-component="accordion">
+              <p class="text-sm font-bold tracking-cinematic uppercase pointer-events-none lg:text-base">{{- block.settings.title -}}</p>
+              {% render 'chevron-right', classNames: 'h-4 w-4 block pointer-events-none group-open:hidden sm:!hidden opacity-40' %}
+              {% render 'chevron-down', classNames: 'h-4 w-4 hidden pointer-events-none group-open:block sm:!hidden opacity-40' %}
+            </button>
+
+            <div class="max-h-0 overflow-hidden ease-in-out duration-300 sm:max-h-max">
+              <nav class="mb-10 lg:mb-0">
+                <ul class="">
+                  {% for link in block.settings.menu.links %}
+                    <li class="mb-2 last:mb-0 lg:mb-3 lg:last:mb-0">
+                      <a href="{{ link.url }}" class="text-[11px] text-white opacity-60 uppercase tracking-widest font-medium transition-all hover:opacity-100 hover:text-gold">{{ link.title }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="sm:basis-1/2 md:basis-1/4">
+        <p class="text-sm mb-5 font-bold lg:text-base">{{- section.settings.last_column_title -}}</p>
+        <div class="mb-5 last:mb-0">
+          <p class="text-sm mb-2">{{- section.settings.social_title -}}</p>
+          <div class="flex">
+            {% if settings.facebook_url %}
+              <a href="{{ settings.facebook_url }}" target="_blank" rel="noopener noreferrer" class="mr-2 last:mr-0" aria-label="Go to Facebook">
+                {% render 'facebook-icon', classNames: 'text-white h-5 w-5 transition-colors hover:text-slate-400' %}
+              </a>
+            {% endif %}
+            {% if settings.instagram_url %}
+              <a href="{{ settings.instagram_url }}" target="_blank" rel="noopener noreferrer" class="mx-2" aria-label="Go to Instagram">
+                {% render 'instagram-icon', classNames: 'text-white h-5 w-5 transition-colors hover:text-slate-400' %}
+              </a>
+            {% endif %}
+            {% if settings.youtube_url %}
+              <a href="{{ settings.youtube_url }}" target="_blank" rel="noopener noreferrer" class="mx-2" aria-label="Go to Youtube">
+                {% render 'youtube-icon', classNames: 'text-white h-5 w-5 transition-colors hover:text-slate-400' %}
+              </a>
+            {% endif %}
+            {% if settings.tiktok_url %}
+              <a href="{{ settings.tiktok_url }}" target="_blank" rel="noopener noreferrer" class="mx-2" aria-label="Go to TikTok">
+                {% render 'tiktok-icon', classNames: 'text-white h-5 w-5 transition-colors hover:text-slate-400' %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="mb-5 last:mb-0 max-w-xs">
+          <p class="text-sm mb-2">{{- section.settings.form_title -}}</p>
+          {% form 'customer', data-subscription: 'true', class: 'w-full' %}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <div class="relative flex items-center group">
+              <input
+                class="block w-full bg-transparent border-b border-white/20 py-3 text-sm text-white placeholder:text-white/30 focus:border-gold outline-none transition-colors"
+                value="{{ form.email }}"
+                aria-required="true"
+                autocorrect="off"
+                autocapitalize="off"
+                autocomplete="email"
+                type="email"
+                name="contact[email]"
+                id="suscribe_footer_email"
+                placeholder="{{ 'general.form.email' | t | uppercase }}"
+                required
+              >
+              <button type="submit" class="absolute right-0 p-2 opacity-60 group-hover:opacity-100 hover:text-gold transition-all">
+                <span class="text-[10px] font-bold tracking-widest uppercase">
+                  {{ 'general.form.suscribe' | t }}
+                </span>
+              </button>
+            </div>
+
+            {%- if form.errors -%}
+              <div class="bg-rose-600 text-monastery-white p-3">
+                <div class="flex items-center mb-5">
+                  {% render 'error-icon' classNames: "w-10 h-10 mr-3" %}
+                  <p>
+                    {{ 'errors.form.error_form' | t }}
+                  </p>
+                </div>
+                <ul class="list-disc list-inside">
+                  {% for error in form.errors %}
+                    <li>
+                      {{ form.errors.messages[error] }}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {%- endif -%}
+
+            {%- if form.posted_successfully? -%}
+              <div class="mt-2 bg-monastery-white text-monastery-black p-3 flex items-center" tabindex="-1" autofocus>
+                {% render 'check-icon' classNames: "w-5 h-5 mr-3" %}
+                <p>{{ 'general.form.successful' | t }}</p>
+              </div>
+            {%- endif -%}
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container border-t border-t-slate-100/10 pt-5 pb-24 md:pb-5">
+    <div class="flex justify-center items-center mb-3">
+      {% liquid
+        assign words = settings.payments | split: ','
+        for word in words
+          case word
+            when 'visa'
+              render 'visa-icon', classNames: 'mr-3 last:mr-0'
+            when 'master'
+              render 'master-icon', classNames: 'mr-3 last:mr-0'
+            when 'american'
+              render 'american-icon', classNames: 'mr-3 last:mr-0'
+            when 'apple'
+              render 'apple-icon', classNames: 'mr-3 last:mr-0'
+          endcase
+        endfor
+      %}
+    </div>
+    <div class="text-white text-center">
+      {% assign actual_year = 'now' | date: '%Y' %}
+      <p class="text-xs font-light ">{{- settings.copyright | replace: '[year]', actual_year -}}</p>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Footer",
+  "tag": "footer",
+  "blocks": [
+    {
+      "name": "Menus",
+      "type": "footer_menus",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Menu heading"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "last_column_title",
+      "label": "Título de la ultima columna",
+      "default": "Social"
+    },
+    {
+      "type": "header",
+      "content": "== Redes sociales"
+    },
+    {
+      "type": "text",
+      "id": "social_title",
+      "label": "Título de las redes sociales",
+      "default": "Mantente conectado"
+    },
+    {
+      "type": "header",
+      "content": "== Formulario"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Título del formulario",
+      "default": "Suscríbete para recibir novedades"
+    }
+  ]
+}
+{% endschema %}
