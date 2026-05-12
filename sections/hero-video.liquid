@@ -2,11 +2,24 @@
 <div data-component="video" class="relative w-full block">
 
 <div class="relative block">
+    {% liquid
+        assign mobile_poster = section.settings.mobile_poster_image
+        assign desktop_poster = section.settings.desktop_poster_image
+
+        if section.settings.collection != blank
+            if mobile_poster == blank
+                assign mobile_poster = section.settings.collection.featured_image
+            endif
+            if desktop_poster == blank
+                assign desktop_poster = section.settings.collection.featured_image
+            endif
+        endif
+    %}
     <div class="relative block overlay after:content-[''] after:absolute after:inset-0 after:bg-black" style="--overlay-opacity: {{ section.settings.custom_overlay }}">
       <video 
         class="block w-full h-full object-cover min-h-[450px] max-h-screen md:hidden js-video-mobile"
-        {% if section.settings.mobile_poster_image != blank %}
-          poster="{{ section.settings.mobile_poster_image | image_url }}" 
+        {% if mobile_poster != blank %}
+          poster="{{ mobile_poster | image_url }}" 
         {% endif %}
         src="{{ section.settings.mobile_video }}"
         autoplay
@@ -20,10 +33,9 @@
   
       <video 
         class="hidden w-full h-full object-cover min-h-[450px] max-h-[750px] md:block 2xl:max-h-screen js-video-desktop"
-        {% if section.settings.desktop_poster_image != blank %}
-          poster="{{ section.settings.desktop_poster_image | image_url }}" 
+        {% if desktop_poster != blank %}
+          poster="{{ desktop_poster | image_url }}" 
         {% endif %}
-
         src="{{ section.settings.desktop_video }}"
         autoplay
         muted
@@ -49,6 +61,12 @@
                   assign contentClasses = 'text-monastery-white'
                 endif
               %}
+              {% liquid
+                assign title_text = block.settings.title
+                if section.settings.collection != blank and title_text == blank or title_text == 'TITULO'
+                  assign title_text = section.settings.collection.title
+                endif
+              %}
               <h2 
                 class="custom-format {{ contentClasses }}"
                 style="
@@ -62,7 +80,7 @@
                   --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
                 "
               >
-                {{ block.settings.title }}
+                {{ title_text }}
               </h2>
             {% when 'custom_text' %}
               {% liquid
@@ -106,10 +124,16 @@
                 endcase
               %}
 
-              {% if block.settings.link %}
+              {% liquid
+                assign btn_link = block.settings.link
+                if section.settings.collection != blank and btn_link == blank
+                  assign btn_link = section.settings.collection.url
+                endif
+              %}
+              {% if btn_link %}
                 <a 
                   class="btn mt-3 custom-format lg:mr-2 lg:last:lg-0 {{ buttonColor }} {{ buttonBorder }}" 
-                  href="{{ block.settings.link }}" 
+                  href="{{ btn_link }}" 
                   style="
                     --fs-desktop: {{- block.settings.desktop_font_size -}}px;
                     --fs-mobile: {{- block.settings.mobile_font_size -}}px;
@@ -145,6 +169,12 @@
   "name": "Hero video",
   "tag": "section",
   "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección",
+      "info": "Si se selecciona, el título, las imágenes de poster y los links se tomarán de la colección si están vacíos."
+    },
     {
       "type": "header",
       "content": "== Videos"

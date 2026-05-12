@@ -13,6 +13,12 @@
                   assign contentClasses = 'text-monastery-white'
                 endif
               %}
+              {% liquid
+                assign title_text = block.settings.title
+                if section.settings.collection != blank and title_text == blank or title_text == 'TITULO'
+                  assign title_text = section.settings.collection.title
+                endif
+              %}
               <h2 
                 class="custom-format leading-none {{ contentClasses }}"
                 style="
@@ -26,7 +32,7 @@
                   --ls-mobile: {{- block.settings.mobile_letter_spacing -}}px;
                 "
               >
-                {{ block.settings.title }}
+                {{ title_text }}
               </h2>
             {% when 'custom_text' %}
               {% liquid
@@ -71,10 +77,16 @@
                     assign buttonBorder = ''
                 endcase
               %}
-              {% if block.settings.link %}
+              {% liquid
+                assign btn_link = block.settings.link
+                if section.settings.collection != blank and btn_link == blank
+                  assign btn_link = section.settings.collection.url
+                endif
+              %}
+              {% if btn_link %}
                 <a 
                   class="btn mt-3 custom-format lg:mr-2 lg:last:lg-0 {{ buttonColor }} {{ buttonBorder }}" 
-                  href="{{ block.settings.link }}" 
+                  href="{{ btn_link }}" 
                   style="
                     --fs-desktop: {{- block.settings.desktop_font_size -}}px;
                     --fs-mobile: {{- block.settings.mobile_font_size -}}px;
@@ -104,17 +116,30 @@
     {% endif %}
 
     <div class="overlay" style="--overlay-opacity: {{ section.settings.custom_overlay }}">
+      {% liquid
+        assign mobile_image = section.settings.mobile_image
+        assign desktop_image = section.settings.desktop_image
+
+        if section.settings.collection != blank
+            if mobile_image == blank
+                assign mobile_image = section.settings.collection.featured_image
+            endif
+            if desktop_image == blank
+                assign desktop_image = section.settings.collection.featured_image
+            endif
+        endif
+      %}
       <figure
         class="relative block skeleton"
       >
-        {% if section.settings.mobile_image %}
+        {% if mobile_image %}
           {{
-            section.settings.mobile_image.src
+            mobile_image.src
             | image_url: width: 1024
             | image_tag:
               loading: 'eager',
               fetchpriority: 'high',
-              alt: section.settings.mobile_image.alt,
+              alt: mobile_image.alt,
               class: 'block w-full h-full object-cover min-h-[450px] max-h-screen md:hidden'
           }}
 
@@ -124,14 +149,14 @@
 
         {% endif %}
 
-        {% if section.settings.desktop_image %}
+        {% if desktop_image %}
           {{
-            section.settings.desktop_image.src
+            desktop_image.src
             | image_url: width: 1990
             | image_tag:
               loading: 'eager',
               fetchpriority: 'high',
-              alt: section.settings.desktop_image.alt,
+              alt: desktop_image.alt,
               class: 'hidden w-full h-full object-cover min-h-[450px] max-h-[750px] md:block 2xl:max-h-screen'
           }}
           {% else %}
@@ -147,6 +172,12 @@
   "name": "Hero con imagen",
   "tag": "section",
   "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección",
+      "info": "Si se selecciona, el título, las imágenes y los links se tomarán de la colección si están vacíos."
+    },
     {
       "type": "header",
       "content": "== Imagenes"
