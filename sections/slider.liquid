@@ -50,22 +50,35 @@
 
         {% case slide.type %}
           {% when 'image_slide' %}
-              <div
+            {% liquid
+              assign slide_title = slide.settings.title
+              assign slide_link = slide.settings.link
+
+              if slide.settings.collection != blank
+                if slide_title == blank or slide_title == 'TITULO'
+                  assign slide_title = slide.settings.collection.title
+                endif
+                if slide_link == blank
+                  assign slide_link = slide.settings.collection.url
+                endif
+              endif
+            %}
+            <div
               class="swiper-slide"
               data-color="{{ paginationClasses }}"
               {% if slide.settings.delay %}
                 data-swiper-autoplay="{{ slide.settings.delay }}"
               {% endif %}
             >
-              {% if slide.settings.link %}
+              {% if slide_link %}
                 <a
                   {% if slide.settings.is_blank %}
                     target="_blank"
                   {% endif %}
-                  href="{{ slide.settings.link }}"
+                  href="{{ slide_link }}"
                   class="relative block overlay after:content-[''] after:absolute after:inset-0 after:bg-black h-full w-full pb-[150%] md:pb-[45.8%]"
                   style="--overlay-opacity: {{ slide.settings.overlay }}"
-                > 
+                >
                 {% else %}
                   <div
                     class="relative block overlay after:content-[''] after:absolute after:inset-0 after:bg-black h-full w-full pb-[150%] md:pb-[45.8%]"
@@ -105,7 +118,7 @@
                   class="custom-space max-w-full w-max absolute z-10 {{ slide.settings.mobile_vertical_alignment }} {{ slide.settings.mobile_horizontal_alignment }} {{ slide.settings.mobile_text_alignment }} {{ slide.settings.desktop_vertical_alignment }} {{ slide.settings.desktop_horizontal_alignment }} {{ slide.settings.desktop_text_alignment }}"
                   style="--pt-desktop:{{ slide.settings.desktop_offset_top }}px;--pb-desktop:{{ slide.settings.desktop_offset_bottom }}px;--pl-desktop:{{ slide.settings.desktop_offset_left }}px;--pr-desktop:{{ slide.settings.desktop_offset_right }}px;--pt-mobile:{{ slide.settings.mobile_offset_top }}px;--pb-mobile:{{ slide.settings.mobile_offset_bottom }}px;--pl-mobile:{{ slide.settings.mobile_offset_left }}px;--pr-mobile:{{ slide.settings.mobile_offset_right }}px"
                 >
-                  {% if slide.settings.title != blank %}
+                  {% if slide_title != blank %}
                     <h2 class="custom-format {{ titleColor }} tracking-cinematic"
                       style="
                         --fs-desktop: {{- slide.settings.desktop_title_font_size -}}px;
@@ -116,7 +129,7 @@
                         --ls-mobile: {{- slide.settings.mobile_title_letter_spacing -}}px;
                       "
                     >
-                      {{ slide.settings.title }}
+                      {{ slide_title }}
                     </h2>
                   {% endif %}
 
@@ -152,7 +165,7 @@
                     </span>
                   {% endif %}
                 </div>
-              {% if slide.settings.link %}
+              {% if slide_link %}
                 </a>
                 {% else %}
                 </div>
@@ -305,6 +318,12 @@
       "name": "Imagen",
       "type": "image_slide",
       "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Conectar con Colección (opcional)",
+          "info": "Si se selecciona, el título y el link se tomarán de la colección si están vacíos."
+        },
         {
           "type": "header",
           "content": "== Imagenes"

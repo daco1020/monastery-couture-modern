@@ -57,10 +57,23 @@
 
     {% case gridItem.type %}
       {% when 'grid_image' %}
-        {%- if gridItem.settings.link -%}
+        {% liquid
+          assign grid_title = gridItem.settings.title
+          assign grid_link = gridItem.settings.link
+
+          if gridItem.settings.collection != blank
+            if grid_title == blank or grid_title == 'TITULO'
+              assign grid_title = gridItem.settings.collection.title
+            endif
+            if grid_link == blank
+              assign grid_link = gridItem.settings.collection.url
+            endif
+          endif
+        %}
+        {%- if grid_link -%}
               <a 
                   class="relative block overflow-hidden col-span-2 {{ elementsClasses[position] }}" 
-                  href="{{ gridItem.settings.link }}"
+                  href="{{ grid_link }}"
                   {% if gridItem.settings.is_blank %}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -91,7 +104,7 @@
             data-animate class="custom-space max-w-full w-max absolute z-10 {{ gridItem.settings.mobile_vertical_alignment }} {{ gridItem.settings.mobile_horizontal_alignment }} {{ gridItem.settings.mobile_text_alignment }} {{ gridItem.settings.desktop_vertical_alignment }} {{ gridItem.settings.desktop_horizontal_alignment }} {{ gridItem.settings.desktop_text_alignment }}"
             style="--pt-desktop:{{ gridItem.settings.desktop_offset_top }}px;--pb-desktop:{{ gridItem.settings.desktop_offset_bottom }}px;--pl-desktop:{{ gridItem.settings.desktop_offset_left }}px;--pr-desktop:{{ gridItem.settings.desktop_offset_right }}px;--pt-mobile:{{ gridItem.settings.mobile_offset_top }}px;--pb-mobile:{{ gridItem.settings.mobile_offset_bottom }}px;--pl-mobile:{{ gridItem.settings.mobile_offset_left }}px;--pr-mobile:{{ gridItem.settings.mobile_offset_right }}px"
           >
-            {% if gridItem.settings.title != blank %}
+            {% if grid_title != blank %}
                 <h2 class="custom-format {{ titleColor }} tracking-cinematic uppercase"
                   style="
                     --fs-desktop: {{- gridItem.settings.desktop_title_font_size -}}px;
@@ -104,7 +117,7 @@
                     --ls-mobile: {{- gridItem.settings.mobile_title_letter_spacing -}}px;
                   "
                 >
-                  {{ gridItem.settings.title }}
+                  {{ grid_title }}
                 </h2>
             {% endif %}
 
@@ -148,7 +161,7 @@
             {% endif %}
           </div>
 
-        {%- if gridItem.settings.link -%}
+        {%- if grid_link -%}
               </a>
           {%- else -%}
             </div>
@@ -400,6 +413,12 @@
       "name": "Imagen",
       "type": "grid_image",
       "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Conectar con Colección (opcional)",
+          "info": "Si se selecciona, el título y el link se tomarán de la colección si están vacíos."
+        },
         {
           "type": "header",
           "content": "== Imagen de fondo"
