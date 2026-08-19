@@ -21,7 +21,7 @@
           <li class="text-[10px] tracking-widest uppercase font-bold text-gold">
             <span aria-current="page">{{ product.title }}</span>
           </li>
-        {%- when 'collection' and collection.handle -%}
+        {%- when 'collection' -%}
           <li class="text-[10px] tracking-widest uppercase font-bold text-gold">
             <span aria-current="page">{{ collection.title }}</span>
           </li>
@@ -235,3 +235,13 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{%- when 'collection' and collection.handle -%}"
+  to: "{%- when 'collection' -%}"
+  position: 1283..1308
+{% endcomment %}
